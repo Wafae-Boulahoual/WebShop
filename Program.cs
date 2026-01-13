@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            //Helpers.CategorySeeder();
+            // Helpers.Productseeder();
+            Helpers.WelcomeTextWindow();
+            Helpers.CustomerOrAdmin();
         }
     }
 }
