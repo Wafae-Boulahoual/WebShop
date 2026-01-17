@@ -10,9 +10,7 @@ namespace VardagshörnanApp.Models
     {
         Väntande,
         Betald,
-        Skickad,
-        // Orderstatus Avbruten har tagits bort eftersom den skulle kräva hantering
-        //av återbetalningar och lager, vilket inte ingår i projektets omfattning.
+        // Orderstatus Avbruten och skickad har jag tagit bort eftersom den ingår inte i uppgiften
     }
     public enum PaymentMethod
     {

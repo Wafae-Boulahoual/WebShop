@@ -13,43 +13,40 @@ namespace VardagshörnanApp.Admin
             while (true)
             {
                 Console.Clear();
-                Helpers.WelcomeTextWindow();
-                List<string> topText3 = new List<string> { "1. Hantera produkter", "2. Hantera kategorier", "3. Hantera kunder", "4. Se statistik(Queries)", "0. Tillbaka" };
-                var windowTop3 = new Window("Vad vill du hantera?", 52, 6, topText3);
-                windowTop3.Draw();
+                Common.WelcomeTextWindow();
+                ChangeProduct.ChangeProductWindow();
+                ChangeCategory.ChangeCategoryWindow();
+                ChangeCustomer.ChangeCustomerWindow();
+                Common.SearchAProductWindow();
+                Statistics.StatisticsWindow();
+                char choice = char.ToLower(Console.ReadKey().KeyChar);
 
-                if (int.TryParse(Console.ReadLine(), out int choice))
+                switch (choice)
                 {
-
-                    switch (choice)
-                    {
-                        case 1:
-                            ChangeProduct.ChangeProductsMenu();
-                            break; // apposto
-                        case 2:
-                            ChangeCategory.ChangeCategoriesMenu();
-                            break; // apposto
-                        case 3:
-                            //ChangeCustomer.ChangeCustomersMenu();
-                            break;
-                        case 4:
-                            //ChangeCustomer.OrdersHistorik();
-                            // ska använda dapper här
-                            break;
-                        case 0:
-                            Console.Clear();
-                            Helpers.WelcomeTextWindow();
-                            Helpers.CustomerOrAdmin();
-                            break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Fel val! Försök igen");
-                    return;
-                }
+                    case '1': ChangeProduct.AllProductsForAdmin(); break;
+                    case '2': ChangeProduct.AddProduct(); break;
+                    case '3': ChangeProduct.ChangeDetails();  break;
+                    case '4': ChangeProduct.DeleteAProduct(); break;
+                    case 'a': ChangeCategory.AllCategoriesForAdmin(); break;
+                    case 'b': ChangeCategory.AddCategory(); break;
+                    case 'c': ChangeCategory.ChangeNameCategory();break;
+                    case 'd': ChangeCategory.ChangeDescriptionCategory(); break;
+                    case 'x': ChangeCustomer.AllCustomersForAdmin(); break;
+                    case 'y': ChangeCustomer.ChangeCustomersDetails(); break;
+                    case 'z': ChangeCustomer.OrdersHistorik(); break;
+                    case 'w': Statistics.Queries(); break;
+                    case 's': ChangeProduct.SearchProductAdmin(); break; // rör inte
+                    case 'q': Common.WelcomeTextWindow(); Common.CustomerOrAdmin(); return;
+                    default: Console.WriteLine("Fel val! försök igen "); break;
+                } 
             }
 
+        }
+        public static void LoginAdmin()
+        {
+            Console.WriteLine("Ange Användarnamn:");
+            string username = Console.ReadLine();
+            
         }
     }
 

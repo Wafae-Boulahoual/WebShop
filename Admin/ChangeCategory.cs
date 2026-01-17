@@ -9,65 +9,27 @@ namespace VardagshörnanApp.Admin
 {
     internal class ChangeCategory
     {
-        public static void ChangeCategoriesMenu()
+        public static void AllCategoriesForAdmin()
         {
-            Console.Clear();
             while (true)
             {
                 Console.Clear();
-                Helpers.WelcomeTextWindow();
-                List<string> topText5 = new List<string> { "1. Se alla kategorier", "2. Lägga till en ny kategori", "3. Ändra en kategori namn", "4. Ändra en kategori beskrivning", "0. Tillbaka" };
-                var windowTop5 = new Window("Välj en alternativ", 52, 6, topText5);
-                windowTop5.Draw();
-
-                if (int.TryParse(Console.ReadLine(), out int choice))
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("-----------------------------------------------------------------------------------------");
+                Console.WriteLine($"| {"Id",-5} | {"Kategori namn",-26} | {"Beskrivning",-48} |");
+                Console.WriteLine("-----------------------------------------------------------------------------------------");
+                Console.ResetColor();
+                using (var db = new MyDbContext())
                 {
-                    switch (choice)
+                    foreach (var category in db.Categories)
                     {
-                        case 1:
-                            AllCategoriesForAdmin();
-                            break;
-                        case 2:
-                            AddCategory();
-                            AllCategoriesForAdmin();
-                            break;
-                        case 3:
-                            ChangeNameCategory();
-                            break;
-                        case 4:
-                            ChangeDescriptionCategory();
-                            break;
-                        case 0:
-                            AdminPage.AdminMenu();
-                            break;
-                        default:
-                            Console.WriteLine("Fel val! försök igen");
-                            return;
+                        Console.WriteLine($"| {category.Id,-5} | {category.Name,-26} | {category.Description,-48} |");
+                        Console.WriteLine("-----------------------------------------------------------------------------------------");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Försök igen!");
-                    return;
-                }
+                Console.WriteLine("Tryck en valfri tangent för att fortsätta...");
                 Console.ReadKey();
-            }
-        }
-        public static void AllCategoriesForAdmin()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("-----------------------------------------------------------------------------------------");
-            Console.WriteLine($"| {"Id",-5} | {"Kategori namn",-26} | {"Beskrivning",-48} |");
-            Console.WriteLine("-----------------------------------------------------------------------------------------");
-            Console.ResetColor();
-            using (var db = new MyDbContext())
-            {
-                foreach (var category in db.Categories)
-                {
-                    Console.WriteLine($"| {category.Id,-5} | {category.Name,-26} | {category.Description,-48} |");
-                    Console.WriteLine("-----------------------------------------------------------------------------------------");
-                }
+                return;
             }
         }
         public static void AddCategory()
@@ -117,8 +79,8 @@ namespace VardagshörnanApp.Admin
                     db.SaveChanges();
                     Console.WriteLine("Uppdateringen lyckades.");
                 }
+                Console.ReadKey();
             }
-            Console.ReadKey();
         }
         public static void ChangeDescriptionCategory()
         {
@@ -147,6 +109,14 @@ namespace VardagshörnanApp.Admin
                 }
             }
             Console.ReadKey();
+        }
+        public static void ChangeCategoryWindow()
+        {
+            List<string> topText5 = new List<string> { "","A. Se alla kategorier", "B. Lägga till en ny kategori", "C. Ändra en kategori namn", "D. Ändra en kategori beskrivning","" };
+            Console.ForegroundColor = ConsoleColor.Green;
+            var windowTop5 = new Window("Hantera en kategori:", 40, 15, topText5);
+            Console.ResetColor();
+            windowTop5.Draw();
         }
     }
 }

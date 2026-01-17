@@ -6,8 +6,9 @@
         {
             //Helpers.CategorySeeder();
             // Helpers.Productseeder();
-            Helpers.WelcomeTextWindow();
-            Helpers.CustomerOrAdmin();
+            Common.WelcomeTextWindow();
+            Common.CustomerOrAdmin();
+            
         }
     }
 }
