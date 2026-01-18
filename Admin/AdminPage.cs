@@ -27,6 +27,7 @@ namespace VardagshörnanApp.Admin
                     case '2': ChangeProduct.AddProduct(); break;
                     case '3': ChangeProduct.ChangeDetails();  break;
                     case '4': ChangeProduct.DeleteAProduct(); break;
+                    case '5': ChangeProduct.ChangeFeaturedProducts(); break;
                     case 'a': ChangeCategory.AllCategoriesForAdmin(); break;
                     case 'b': ChangeCategory.AddCategory(); break;
                     case 'c': ChangeCategory.ChangeNameCategory();break;

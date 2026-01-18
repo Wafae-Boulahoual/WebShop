@@ -10,7 +10,7 @@ namespace VardagshörnanApp.Admin
     {
         public static void StatisticsWindow()
         {
-            List<string> topText = new List<string> { "","S. Statistik", "Q. Start sida","" };
+            List<string> topText = new List<string> { "","W. Statistik", "Q. Start sida","" };
             Console.ForegroundColor = ConsoleColor.Green;
             var windowTop = new Window("Välj en alternativ", 112, 15, topText);
             Console.ResetColor();

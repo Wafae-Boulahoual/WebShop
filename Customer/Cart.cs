@@ -10,8 +10,7 @@ namespace VardagshörnanApp.Customer
     {
         public static void SelectedProducts()
         {
-            Console.WriteLine("alla utvalda produkter visas");
-            // ska fixas
+            
         }
     }
 }

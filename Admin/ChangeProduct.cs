@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace VardagshörnanApp.Admin
     {
         public static void ChangeProductWindow()
         {
-            List<string> topText3 = new List<string> { "","1. Se alla produkter","2. Lägga till en ny produkt", "3. Ändra en detalj ","4. Ta bort en produkt", "" };
+            List<string> topText3 = new List<string> { "","1. Se alla produkter","2. Lägga till en ny produkt", "3. Ändra en detalj ","4. Ta bort en produkt","5. Ändra Utvalda produkter" ,"" };
             Console.ForegroundColor = ConsoleColor.Green;
             var windowTop3 = new Window("Hantera en produkt:", 3, 15, topText3);
             Console.ResetColor();
@@ -241,6 +242,58 @@ namespace VardagshörnanApp.Admin
         {
             var product = Common.SearchBarre();
             ProductDetailsForAdmin(product);
+        }
+        public static void ChangeFeaturedProducts()
+        {
+            Console.Clear();
+            Console.WriteLine("Utvalda produkter på start sida :");
+            using (var db = new MyDbContext())
+            {
+                var featuredProducts = db.Products
+                    .Include(p => p.Category)
+                    .Where(p => p.IsFeatured)
+                    .Take(3)
+                    .ToList();
+                foreach (var product in featuredProducts)
+                {
+                    Console.WriteLine("Produkt namn: " + product.Name);
+                    Console.WriteLine("Produkt Id :" + product.Id);
+                    Console.WriteLine("Pris :" + product.Price);
+                    Console.WriteLine("Kategori : " + product.CategoryId + " " + product.Category.Name);
+                    Console.WriteLine("------------------------------------------------------------------");
+                }
+
+                Console.WriteLine("Vilken produkt vill du ta bort från startsidan? Ange Produkt ID:");
+                if (!int.TryParse(Console.ReadLine(), out int oldId))
+                {
+                    Console.WriteLine("Felaktigt ID.");
+                    return;
+                }
+                Console.Clear();
+                Common.AllProductsTable();
+                Console.WriteLine("Vilken produkt vill du lägga till på startsidan? Ange Produkt ID:");
+                if (!int.TryParse(Console.ReadLine(), out int newId))
+                {
+                    Console.WriteLine("Felaktigt ID.");
+                    return;
+                }
+                var oldProduct = db.Products.SingleOrDefault(p => p.Id == oldId);
+                var newProduct = db.Products.SingleOrDefault(p => p.Id == newId);
+
+                if (oldProduct == null || newProduct == null)
+                {
+                    Console.WriteLine("En eller båda produkterna finns inte.");
+                    return;
+                }
+                oldProduct.IsFeatured = false;
+                newProduct.IsFeatured = true;
+
+                db.SaveChanges();
+            }
+        
+            Console.WriteLine("Startsidan har uppdaterats korrekt.");
+            Console.WriteLine("Tryck valfri tangent för att fortsätta.");
+            Console.ReadKey();
         }
 
     }
