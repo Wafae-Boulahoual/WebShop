@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VardagshörnanApp.Models
 {
-    internal class MyDbContext: DbContext
+    internal class MyDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -18,6 +18,16 @@ namespace VardagshörnanApp.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS01;Database=VardagshörnanDb;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) // för att inte deleta en kategori som innehåller produkter
+        {
+            modelBuilder.Entity<Product>()
+           .HasOne(p => p.Category)
+           .WithMany(c => c.Products)
+           .HasForeignKey(p => p.CategoryId)
+           .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -105,7 +105,8 @@ namespace VardagshörnanApp.Customer
 
             if (choice == 'c')
             {
-                Console.WriteLine("läggs i varukorgen");
+               
+                Cart.AddItemToCart(product);
                 Thread.Sleep(1000);
             }
         }

@@ -12,18 +12,17 @@ namespace VardagshörnanApp.Customer
     {
         public static void RegisterOrLoginWindow()
         {
-            List<string> topText10 = new List<string> { "R. registrera dig", "L. Logga in" };
-            var windowTop10 = new Window("Register/Login", 110, 1, topText10);
-            windowTop10.Draw();
+            List<string> topText = new List<string> { "R. registrera dig", "L. Logga in" };
+            var windowTop = new Window("Register/Login", 110, 1, topText);
+            windowTop.Draw();
         }
-        public static void RegisterNewCustomer()
+        public static Models.Customer RegisterNewCustomer()
         {
             Console.Clear();
-            //Common.WelcomeTextWindow();
+            Common.WelcomeTextWindow();
             using (var db = new MyDbContext())
             {
                 var customer = new Models.Customer();
-
                 Console.WriteLine("Vänligen fyll i dina uppgifter");
                 Console.Write("Förnamn: ");
                 customer.FirstName = Console.ReadLine();
@@ -35,8 +34,24 @@ namespace VardagshörnanApp.Customer
                 customer.City = Console.ReadLine();
                 Console.Write("Land: ");
                 customer.Country = Console.ReadLine();
-                Console.Write("E-post: ");
-                customer.EmailAdress = Console.ReadLine();
+                bool emailExists;
+                do
+                {
+                    Console.Write("E-post: ");
+                    customer.EmailAdress = Console.ReadLine();
+
+                    // Kontrollera om mejlet redan finns
+                    var existingCustomer = db.Customers
+                                             .FirstOrDefault(c => c.EmailAdress == customer.EmailAdress);
+
+                    emailExists = existingCustomer != null; // om mejlet finns redan
+
+                    if (emailExists)
+                    {
+                        Console.WriteLine("Denna e-post är redan registrerad, försök en annan.");
+                    }
+
+                } while (emailExists);
                 Console.Write("Telefonnummer (valfri): ");
                 customer.PhoneNumber = Console.ReadLine();
                 Console.Write("Födelsedatum (yyyy-mm-dd): ");
@@ -65,49 +80,75 @@ namespace VardagshörnanApp.Customer
 
                 db.Customers.Add(customer);
                 db.SaveChanges();
-                Console.WriteLine("Grattis, "+customer.FirstName+"! Din registrering är klar.");
-                Console.WriteLine("Användarnamn: "+customer.EmailAdress);
-            }
-            Console.ReadKey();
-        }
-        public static void CustomerLogin()
-        {
-            while (true)
-            {
-                Console.Clear();
-                using (var db = new MyDbContext())
-                {
-                    Console.Write("Användarnamn (E-post): ");
-                    string username = Console.ReadLine()!;
-
-                    Console.Write("Lösenord: ");
-                    string password = Console.ReadLine()!;
-
-                    var customer = db.Customers
-                                     .FirstOrDefault(c => c.EmailAdress == username && c.Password == password);
-
-                    if (customer != null)
-                    {
-                        Console.WriteLine($"Välkommen tillbaka, {customer.FirstName} {customer.LastName}!");
-                        Thread.Sleep(1500);
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Fel användarnamn eller lösenord.");
-                        Console.Write("Vill du försöka igen? (j/n): ");
-                        string answer = Console.ReadLine()!.ToLower();
-                        if (answer != "j")
-                        {
-                            Console.WriteLine("Login avbruten.");
-                            Thread.Sleep(1500);
-                            break;
-                        }
-                        Console.WriteLine();
-                    }
-                }
+                Session.LoggedInCustomer = customer;
+                Console.WriteLine("Grattis, " + customer.FirstName + "! Din registrering är klar.");
+                Console.WriteLine("Användarnamn: " + customer.EmailAdress);
                 Console.ReadKey();
-            }           
-        }       
+                return customer;
+            }
+        }
+        public static Models.Customer CustomerLogin()
+        {
+            Console.Clear();
+            using (var db = new MyDbContext())
+            {
+                Console.Write("Användarnamn (E-post): ");
+                string username = Console.ReadLine()!;
+
+                Console.Write("Lösenord: ");
+                string password = Console.ReadLine()!;
+
+                var customer = db.Customers
+                                    .FirstOrDefault(c => c.EmailAdress == username && c.Password == password);
+
+                if (customer == null)
+                {
+                    Console.WriteLine("Fel inloggning!");
+                    return null;
+                }
+
+                Session.LoggedInCustomer = customer;
+                Console.WriteLine("Inloggning lyckades!");
+                return customer;
+
+            }
+        }
+        public static Models.Customer HandleLoginOrRegister()
+        {
+            // Om kunden är redan loggad vi använder den
+            if (Session.LoggedInCustomer != null)
+            {
+                return Session.LoggedInCustomer;
+            }
+
+            Console.WriteLine("Du måste logga in eller registrera dig:");
+            Console.WriteLine("1. Logga in");
+            Console.WriteLine("2. Registrera dig");
+
+            string choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                return RegisterCustomer.CustomerLogin();
+            }
+            else if (choice == "2")
+            {
+                return RegisterCustomer.RegisterNewCustomer();
+            }
+            else
+            {
+                Console.WriteLine("Fel val.");
+                return null;
+            }
+        }
+
     }
 }
+    
+
+
+
+
+    
+
+

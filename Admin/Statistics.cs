@@ -18,7 +18,7 @@ namespace VardagshörnanApp.Admin
         }
         public static void Queries()
         {
-            Console.WriteLine("fixa med queries!");
+           
         }
     }
 }

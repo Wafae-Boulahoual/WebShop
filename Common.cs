@@ -14,8 +14,8 @@ namespace VardagshörnanApp
     {
         public static void WelcomeTextWindow()
         {
-            List<string> topText = new List<string> { "                  * VardagsHörnan *", "             ---------------------------", "               Din stil, ditt uttryck!                " };
-            var windowTop = new Window("", 42, 5, topText);
+            List<string> topText = new List<string> { "                             * VardagsHörnan *", "                        ---------------------------", "               Små detaljer som gör hem och kontor mer trivsamma.                " };
+            var windowTop = new Window("", 30, 5, topText);
             windowTop.Draw();
         }
         public static void CustomerOrAdmin()
@@ -141,7 +141,7 @@ namespace VardagshörnanApp
             using (var db = new MyDbContext())
             {
                 var product = db.Products
-                                .Include(p => p.Category) // Assicurati di includere la categoria
+                                .Include(p => p.Category) // För att nå kategori namn
                                 .FirstOrDefault(p => p.Name.ToLower().Contains(input.ToLower()));
 
                 if (product == null)

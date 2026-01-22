@@ -18,6 +18,7 @@ namespace VardagshörnanApp.Customer
                 Console.Clear();
                 Common.WelcomeTextWindow();
                 RegisterCustomer.RegisterOrLoginWindow();
+                Cart.CartWindow();
                 Common.SearchAProductWindow();
                 //Shop.FeaturedProductsWindows();
                 Shop.CustomerWindow();
@@ -34,9 +35,9 @@ namespace VardagshörnanApp.Customer
                     case '1':Shop.ProductsForCustomer(1);break;
                     case '2': Shop.ProductsForCustomer(2); break;
                     case '3':Shop.ProductsForCustomer(3); break;
-                    case 'a': Shop.ProductsForCustomer(); break;
-                    case 'v':Console.WriteLine("varukorgen visas");break;
-                    case 'q':Common.WelcomeTextWindow();Common.CustomerOrAdmin();return;
+                    case 'a':Shop.ProductsForCustomer(); break;
+                    case 'v':Cart.ShowCart(Cart.cart); Cart.UpdateCart();break;
+                    case 'q':Common.WelcomeTextWindow(); Common.CustomerOrAdmin();return;
                     case 's':Shop.SearchProductCustomer();break; // rör inte
                     default: Console.WriteLine("Fel val! försök igen");Thread.Sleep(500); break;
                 }

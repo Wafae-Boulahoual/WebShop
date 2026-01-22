@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,14 +77,17 @@ namespace VardagshörnanApp.Admin
             {
                 Console.Clear();
                 Console.WriteLine("=========================================================================================================================================");
-                Console.WriteLine($"| {"Id",-3} | {"Namn",-25} | {"Adress",-39} | {"Email",-25} | {"Födelsedatum",-10}  ");
+                Console.WriteLine($"|{"Id",-3} |{"Namn",-25} |{"Stad",-15} |{"Email",-25} |{"Telefonnummer",-15} |{"Antal ordrar", -4}");
                 Console.WriteLine("==========================================================================================================================================");
 
                 using (var db = new MyDbContext())
                 {
+                    var customers = db.Customers
+                                    .Include(c => c.Orders)
+                                    .ToList();
                     foreach (var c in db.Customers)
                     {
-                        Console.WriteLine($"| {c.Id,-3} | {c.FirstName} {c.LastName,-20} | {c.Address} {c.City} {c.Country,-15} | {c.EmailAdress,-25} | {c.BirthDate,-10}");
+                        Console.WriteLine($"|{c.Id,-3} |{c.FirstName} {c.LastName,-19} |{c.City, -15}|{c.EmailAdress,-25} |{c.PhoneNumber,-15} |{c.Orders.Count,-4}");
                         Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------------");
 
                     }
@@ -107,9 +111,9 @@ namespace VardagshörnanApp.Admin
                     Thread.Sleep(1000);
                     continue; // börja om while loopen
                 }
-                List<string> topText9 = new List<string> { "1. Förnamn", "2.Efternamn ", "3. Adress ", "4. Stad", "5. Land", "6. Mejl adress", "7. Födelsdatum" };
-                var windowTop9 = new Window("Vad vill du ändra? : ", 52, 43, topText9);
-                windowTop9.Draw();
+                Console.WriteLine("Vad vill du ändra? : ");
+                Console.WriteLine("\n 1. Förnamn \n2.Efternamn \n3. Adress \n4. Stad \n5. Land \n6. Mejl adress \n7. Födelsdatum");
+               
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
                     Console.WriteLine("Fel val! Försök igen.");
@@ -197,58 +201,24 @@ namespace VardagshörnanApp.Admin
                     }
                     else
                     {
-                        Console.WriteLine("==============================================================================================");
-                        Console.WriteLine($"| {"Order Id",-5} | {"Datum",-15} | {"Status",-10} | {"Betalning",-10} | {"Frakt",-10} |");
-                        Console.WriteLine("==============================================================================================");
-
                         foreach (var o in orders)
                         {
-                            Console.WriteLine($"| {o.Id,-5} | {o.OrderDate:yyyy-MM-dd,-15} | {o.Status,-10} | {o.PaymentMethod,-10} | {o.ShippingMethod,-10} |");
+                            Console.WriteLine("-----------------------------------------------------------------------------------------------------");
+                            Console.WriteLine("Order Id           : "+ o.Id);
+                            Console.WriteLine("Datum              : "+ o.OrderDate);
+                            Console.WriteLine("Status             : "+ o.Status);
+                            Console.WriteLine("Betalning          : "+ o.PaymentMethod);
+                            Console.WriteLine("Frakt              : "+ o.ShippingMethod);
+                            Console.WriteLine("Totalt             : "+ o.TotalAmount);
                         }
-
                         Console.WriteLine("-----------------------------------------------------------------------------------------------------");
                         Console.WriteLine("Kunden har handlat: "+orders.Count+" gånger hos oss.");
                     }
                 }
-
                 Console.ReadKey();
                 break;
             }
-            //Console.Clear();
-            //AllCustomersForAdmin();
-            //Console.WriteLine("Ange Kund Id:");
-            //while(true)
-            //{ 
-            //    if (!int.TryParse(Console.ReadLine(), out int choice))
-            //    {
-            //        Console.WriteLine("Fel val! Försök igen.");
-            //        continue; // börja om while loopen
-            //    }
-            //    int customerId = int.Parse(Console.ReadLine());
-            //    using (var db = new MyDbContext())
-            //    {
-            //        var orders = db.Orders
-            //            .Where(o => o.CustomerId == customerId)
-            //            .ToList(); // omvandla alla kundens ordrar till en list
-            //        if (orders.Count == 0) // kontrollera om lista är tom
-            //        {
-            //            Console.WriteLine("Inga ordrar hittades.");
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine("==============================================================================================");
-            //            Console.WriteLine($"| {"Order Id",-5} | {"Datum",-15} | {"Status",-10} | {"Betalning",-10} | {"Frakt",-10} |");
-            //            Console.WriteLine("==============================================================================================");
-            //            foreach (var o in orders)
-            //            {
-            //                Console.WriteLine($"| {o.Id,-5} | {o.OrderDate,-15} | {o.Status,-10} | {o.PaymentMethod,-10} | {o.ShippingMethod,-10} | ");
-            //                Console.WriteLine("-----------------------------------------------------------------------------------------------------");
-            //                Console.WriteLine("Kunden har handlat :"+ orders.Count() + " gånger hos oss." );
-            //            }
-            //        }
-            //    }
-            //    Console.ReadKey();
-            
+
         }
         public static void ChangeCustomerWindow()
         {
