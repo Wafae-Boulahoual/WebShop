@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("96c0aad6-10b9-4017-a27b-5c2cfabc497b")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe9ba50f8f6ebe3b193911c20797057362a542c1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6af93d423adee22072ac6a48ea595a76e564d68")]
 [assembly: System.Reflection.AssemblyProductAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using VardagshörnanApp.Models;
@@ -10,7 +11,6 @@ namespace VardagshörnanApp.Customer
 {
     internal class CheckOut
     {
-
         public static void Checkout(List<OrderItem> cart)
         {
             if (cart.Count == 0)
@@ -132,35 +132,41 @@ namespace VardagshörnanApp.Customer
                               ShippingMethod shippingMethod, decimal shippingCost,
                               PaymentMethod paymentMethod)
         {
-            using (var db = new MyDbContext())
+            try
             {
-                // Calcolo totale dell'ordine (subtotal + IVA + spedizione)
-                decimal subTotal = cart.Sum(ci => ci.Price * ci.Quantity);
-                decimal vat = subTotal * Order.VAT;
-                decimal totalAmount = subTotal + vat + shippingCost; // MODIFICA: totale finale
-
-                var order = new Order
+                using (var db = new MyDbContext())
                 {
-                    CustomerId = customer.Id,
-                    OrderDate = DateTime.Now,
-                    ShippingMethod = shippingMethod,
-                    ShippingCost = shippingCost,
-                    PaymentMethod = paymentMethod,
-                    TotalAmount = totalAmount,
-                    Status = OrderStatus.Betald,
-                    OrderItems = cart.Select(ci => new OrderItem
-                    {
-                        ProductId = ci.ProductId,
-                        Quantity = ci.Quantity,
-                        Price = ci.Price
-                    }).ToList()
-                };
+                    // räkna totalt (subtotal + moms + frakt)
+                    decimal subTotal = cart.Sum(ci => ci.Price * ci.Quantity);
+                    decimal vat = subTotal * Order.VAT;
+                    decimal totalAmount = subTotal + vat + shippingCost;
 
-                db.Orders.Add(order);
-                db.SaveChanges();
+                    var order = new Order
+                    {
+                        CustomerId = customer.Id,
+                        OrderDate = DateTime.Now,
+                        ShippingMethod = shippingMethod,
+                        ShippingCost = shippingCost,
+                        PaymentMethod = paymentMethod,
+                        TotalAmount = totalAmount,
+                        OrderItems = cart.Select(ci => new OrderItem
+                        {
+                            ProductId = ci.ProductId,
+                            Quantity = ci.Quantity,
+                            Price = ci.Price
+                        }).ToList()
+                    };
+
+                    db.Orders.Add(order);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Fel vid sparande av beställningen.");
+                Console.WriteLine(ex.Message); // visa felet
             }
         }
-
 
     }
 }

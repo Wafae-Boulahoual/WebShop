@@ -206,7 +206,6 @@ namespace VardagshörnanApp.Admin
                             Console.WriteLine("-----------------------------------------------------------------------------------------------------");
                             Console.WriteLine("Order Id           : "+ o.Id);
                             Console.WriteLine("Datum              : "+ o.OrderDate);
-                            Console.WriteLine("Status             : "+ o.Status);
                             Console.WriteLine("Betalning          : "+ o.PaymentMethod);
                             Console.WriteLine("Frakt              : "+ o.ShippingMethod);
                             Console.WriteLine("Totalt             : "+ o.TotalAmount);

@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace VardagshörnanApp.Models
 {
-    public enum OrderStatus
-    {
-        Väntande,
-        Betald,
-    }
+  
     public enum PaymentMethod
     {
         Card,
@@ -31,8 +27,6 @@ namespace VardagshörnanApp.Models
         public virtual Customer Customer { get; set; } = null!; // relation en till många en customer kan ha många orders
 
         public DateTime OrderDate { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Väntande; // per default enum
-
         public ShippingMethod ShippingMethod { get; set; } // enum 
         public PaymentMethod PaymentMethod { get; set; } // enum
         public decimal ShippingCost { get; set; }
