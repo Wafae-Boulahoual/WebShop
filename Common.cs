@@ -27,21 +27,20 @@ namespace VardagshörnanApp
                 List<string> topText2 = new List<string> { "                ", "   Tryck K Om du är en Kund   ", "   Tryck A om du är en Admin   ", "                  " };
                 var windowTop2 = new Window("Välkommen till shoppen!", 52, 15, topText2);
                 windowTop2.Draw();
-
+                
                 char role = char.ToLower(Console.ReadKey().KeyChar);
                 if (role == 'k')
                 {
-                    CustomerPage.CustomerMenu();
+                    CustomerPage.CustomerMenu(); // kund sidan
                 }
                 else if (role == 'a')
                 {
-                    AdminPage.AdminMenu();
+                    AdminPage.AdminMenu(); // admin sidan
                 }
                 else
                 {
                     Console.WriteLine("Fel val! Försök igen");
-                   // Console.ReadKey();
-                    continue;
+                    continue; // börjar om while loopen
                 }
                 Console.ReadKey();
             }
@@ -93,7 +92,7 @@ namespace VardagshörnanApp
                 }
             }
             Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------");
-        } // rör inte!
+        } 
         public static void ProductSeeder()
         {
         //    using (var db = new MyDbContext())
@@ -126,7 +125,7 @@ namespace VardagshörnanApp
         //        db.SaveChanges();
         //    }
         }
-        public static void SearchAProductWindow()
+        public static void SearchAProductWindow() // som används i både kund och admin sidan
         {
             List<string> topText2 = new List<string> { "Tryck S för att söka en produkt" };
             var windowTop2 = new Window("", 1, 1, topText2);
@@ -142,7 +141,7 @@ namespace VardagshörnanApp
             {
                 var product = db.Products
                                 .Include(p => p.Category) // För att nå kategori namn
-                                .FirstOrDefault(p => p.Name.ToLower().Contains(input.ToLower()));
+                                .FirstOrDefault(p => p.Name.ToLower().Contains(input.ToLower())); 
 
                 if (product == null)
                 {

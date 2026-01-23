@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace VardagshörnanApp.Models
 {
-  
     public enum PaymentMethod
     {
         Card,
@@ -20,7 +19,7 @@ namespace VardagshörnanApp.Models
     }
     internal class Order
     {
-        public const decimal VAT = 0.25m; // Moms 25% Value Added Taxe
+        public const decimal VAT = 0.25m ; // Moms 25% Value Added Taxe
         public int Id { get; set; }
 
         public int CustomerId { get; set; }
@@ -31,6 +30,6 @@ namespace VardagshörnanApp.Models
         public PaymentMethod PaymentMethod { get; set; } // enum
         public decimal ShippingCost { get; set; }
         public decimal TotalAmount { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>(); // relation en till många som EF använder
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>(); // relation en till många 
     }
 }

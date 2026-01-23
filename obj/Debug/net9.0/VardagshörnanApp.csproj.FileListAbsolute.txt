@@ -290,3 +290,10 @@ C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.
 C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\obj\Debug\net9.0\Vardagsh.EEFEE439.Up2Date
 C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\obj\Debug\net9.0\VardagshörnanApp.genruntimeconfig.cache
 C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\obj\Debug\net9.0\ref\VardagshörnanApp.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Json.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.Configuration.UserSecrets.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\wafae\OneDrive\Desktop\Vardagshörnan\VardagshörnanApp\bin\Debug\net9.0\Microsoft.Extensions.FileSystemGlobbing.dll

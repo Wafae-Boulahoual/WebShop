@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace VardagshörnanApp.Customer
             List<string> topText = new List<string> { "R. registrera dig", "L. Logga in" };
             var windowTop = new Window("Register/Login", 110, 1, topText);
             windowTop.Draw();
-        }
+        } // apposto
         public static Models.Customer RegisterNewCustomer()
         {
             Console.Clear();
@@ -51,7 +52,9 @@ namespace VardagshörnanApp.Customer
                         Console.WriteLine("Denna e-post är redan registrerad, försök en annan.");
                     }
 
-                } while (emailExists);
+                } 
+                while (emailExists);
+
                 Console.Write("Telefonnummer (valfri): ");
                 customer.PhoneNumber = Console.ReadLine();
                 Console.Write("Födelsedatum (yyyy-mm-dd): ");
@@ -78,8 +81,16 @@ namespace VardagshörnanApp.Customer
                 while (password != confirmPassword);
                 customer.Password = password;
 
-                db.Customers.Add(customer);
-                db.SaveChanges();
+                try // försök att spara kunden i databasen
+                {
+                    db.Customers.Add(customer);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Registrering misslyckades: " + ex.Message);
+                }
+                
                 Session.LoggedInCustomer = customer;
                 Console.WriteLine("Grattis, " + customer.FirstName + "! Din registrering är klar.");
                 Console.WriteLine("Användarnamn: " + customer.EmailAdress);
@@ -113,7 +124,9 @@ namespace VardagshörnanApp.Customer
 
             }
         }
-        public static Models.Customer HandleLoginOrRegister()
+        public static Models.Customer HandleLoginOrRegister() // fixa metoden för login och denna
+            // om jag först loggar in i menyn och sen lägger produkter på varukorgen sen vill
+            //checka ut, den kommer inte ihåg att har redan loggat in /måste fixas
         {
             // Om kunden är redan loggad vi använder den
             if (Session.LoggedInCustomer != null)
@@ -140,6 +153,10 @@ namespace VardagshörnanApp.Customer
                 Console.WriteLine("Fel val.");
                 return null;
             }
+        }
+        public static void LogOut()
+        {
+            Session.LoggedInCustomer = null;
         }
 
     }

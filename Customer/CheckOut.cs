@@ -11,7 +11,7 @@ namespace VardagshörnanApp.Customer
 {
     internal class CheckOut
     {
-        public static void Checkout(List<OrderItem> cart)
+        public static void Checkout(List<OrderItem> cart) // dividera metoden, för lång!
         {
             if (cart.Count == 0)
             {
@@ -23,24 +23,24 @@ namespace VardagshörnanApp.Customer
             Console.WriteLine("CHECKOUT");
             Console.WriteLine("--------");
 
-            // Mostra carrello e calcola subtotal + IVA
+            // visa varukorgen och totalt
             decimal subTotal = Cart.ShowCart(cart);
             decimal vat = subTotal * Order.VAT;
-            Console.WriteLine($"Moms (25%): {vat} kr");
+            Console.WriteLine("Moms (25%): " + vat + " kr");
 
-            // MODIFICA: controllo stock prima del checkout
+            // kontrollera lager först
             foreach (var item in cart)
             {
                 if (item.Quantity > item.Product.Stock)
                 {
-                    Console.WriteLine($"Fel: {item.Product.Name} har bara {item.Product.Stock} i lager.");
+                    Console.WriteLine("Fel: " + item.Product.Name + " har bara " + item.Product.Stock + " i lager.");
                     return;
                 }
             }
 
-            // Scelta spedizione
-            decimal shippingCost = 0;
+            decimal shippingCost = 0; // initialisering
             ShippingMethod shippingMethod;
+
             while (true)
             {
                 Console.WriteLine("Välj fraktalternativ:");
@@ -64,13 +64,14 @@ namespace VardagshörnanApp.Customer
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fel val, försök igen.");
+                    Console.ResetColor();
                 }
             }
 
-            // Scelta metodo di pagamento
-            PaymentMethod paymentMethod;
-            while (true) // MODIFICA: loop finché input non valido
+            PaymentMethod paymentMethod;// val av betalning metod
+            while (true)
             {
                 Console.WriteLine("Välj betalningsmetod:");
                 Console.WriteLine("1. Kort");
@@ -80,67 +81,57 @@ namespace VardagshörnanApp.Customer
                 char paymentChoice = Console.ReadKey().KeyChar;
                 Console.WriteLine();
 
-                if (paymentChoice == '1') { paymentMethod = PaymentMethod.Card; break; }
-                else if (paymentChoice == '2') { paymentMethod = PaymentMethod.Invoice; break; }
-                else if (paymentChoice == '3') { paymentMethod = PaymentMethod.Swish; break; }
-                else { Console.WriteLine("Fel val, försök igen."); }
+                if (paymentChoice == '1')
+                {
+                    paymentMethod = PaymentMethod.Card;
+                    break;
+                }
+                else if (paymentChoice == '2')
+                {
+                    paymentMethod = PaymentMethod.Invoice;
+                    break;
+                }
+                else if (paymentChoice == '3')
+                {
+                    paymentMethod = PaymentMethod.Swish;
+                    break;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Fel val, försök igen.");
+                    Console.ResetColor();
+                }
             }
 
             decimal total = subTotal + vat + shippingCost;
             Console.WriteLine("Totalt att betala: " + total + " kr");
             Console.WriteLine("Vill du bekräfta beställningen? (j/n)");
-
             char confirm = char.ToLower(Console.ReadKey().KeyChar);
             Console.WriteLine();
 
             if (confirm != 'j')
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Beställningen avbröts.");
+                Console.ResetColor();
                 return;
             }
 
-            // Login / registrazione
+            // Loggning/registrering
             Models.Customer customer = RegisterCustomer.HandleLoginOrRegister();
             if (customer == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Ingen kund inloggad.");
+                Console.ResetColor();
                 return;
             }
 
-            // Salva ordine
-            SaveOrder(customer, cart, shippingMethod, shippingCost, paymentMethod);
-
-            // MODIFICA: aggiornamento stock prodotti
             using (var db = new MyDbContext())
             {
-                foreach (var item in cart)
+                try
                 {
-                    var product = db.Products.FirstOrDefault(p => p.Id == item.ProductId);
-                    if (product != null)
-                    {
-                        product.Stock -= item.Quantity;
-                    }
-                }
-                db.SaveChanges();
-            }
-
-            Console.WriteLine("Beställningen är genomförd!");
-            cart.Clear();
-        }
-
-        public static void SaveOrder(Models.Customer customer, List<OrderItem> cart,
-                              ShippingMethod shippingMethod, decimal shippingCost,
-                              PaymentMethod paymentMethod)
-        {
-            try
-            {
-                using (var db = new MyDbContext())
-                {
-                    // räkna totalt (subtotal + moms + frakt)
-                    decimal subTotal = cart.Sum(ci => ci.Price * ci.Quantity);
-                    decimal vat = subTotal * Order.VAT;
-                    decimal totalAmount = subTotal + vat + shippingCost;
-
                     var order = new Order
                     {
                         CustomerId = customer.Id,
@@ -148,7 +139,7 @@ namespace VardagshörnanApp.Customer
                         ShippingMethod = shippingMethod,
                         ShippingCost = shippingCost,
                         PaymentMethod = paymentMethod,
-                        TotalAmount = totalAmount,
+                        TotalAmount = total,
                         OrderItems = cart.Select(ci => new OrderItem
                         {
                             ProductId = ci.ProductId,
@@ -156,17 +147,32 @@ namespace VardagshörnanApp.Customer
                             Price = ci.Price
                         }).ToList()
                     };
-
                     db.Orders.Add(order);
+
+                    foreach (var item in cart)
+                    {
+                        var product = db.Products.FirstOrDefault(p => p.Id == item.ProductId);
+                        if (product != null)
+                        {
+                            product.Stock -= item.Quantity;
+                        }
+                    }
                     db.SaveChanges();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Beställningen är genomförd!");
+                    Console.ResetColor();
+
+                    cart.Clear();
+                    AfterCheckOut.AfterCheckoutMenu(customer);
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ett del inträffades!");
+                    Console.WriteLine(ex.Message);
+                    Console.ResetColor();
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Fel vid sparande av beställningen.");
-                Console.WriteLine(ex.Message); // visa felet
-            }
         }
-
-    }
+    } 
 }

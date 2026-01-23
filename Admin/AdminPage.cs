@@ -13,14 +13,8 @@ namespace VardagshörnanApp.Admin
             while (true)
             {
                 Console.Clear();
-                Common.WelcomeTextWindow();
-                ChangeProduct.ChangeProductWindow();
-                ChangeCategory.ChangeCategoryWindow();
-                ChangeCustomer.ChangeCustomerWindow();
-                Common.SearchAProductWindow();
-                Statistics.StatisticsWindow();
+                AdminPageWindows();
                 char choice = char.ToLower(Console.ReadKey().KeyChar);
-
                 switch (choice)
                 {
                     case '1': ChangeProduct.AllProductsForAdmin(); break;
@@ -36,19 +30,28 @@ namespace VardagshörnanApp.Admin
                     case 'y': ChangeCustomer.ChangeCustomersDetails(); break;
                     case 'z': ChangeCustomer.OrdersHistorik(); break;
                     case 'w': Statistics.Queries(); break;
-                    case 's': ChangeProduct.SearchProductAdmin(); break; // rör inte
+                    case 's': ChangeProduct.SearchProductAdmin(); break; 
                     case 'q': Common.WelcomeTextWindow(); Common.CustomerOrAdmin(); return;
-                    default: Console.WriteLine("Fel val! försök igen "); break;
+                    default: 
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Fel val! försök igen ");
+                        Console.ReadKey();
+                        Console.ResetColor();
+                        break;
                 } 
             }
 
-        }
-        public static void LoginAdmin()
+        } // testa sen
+        public static void AdminPageWindows()
         {
-            Console.WriteLine("Ange Användarnamn:");
-            string username = Console.ReadLine();
-            
-        }
+            Common.WelcomeTextWindow();
+            ChangeProduct.ChangeProductWindow();
+            ChangeCategory.ChangeCategoryWindow();
+            ChangeCustomer.ChangeCustomerWindow();
+            Common.SearchAProductWindow();
+            Statistics.StatisticsWindow();
+        } // apposto
+        
     }
 
 }
