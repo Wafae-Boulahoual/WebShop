@@ -3,13 +3,9 @@
     internal class Program
     {
         
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            
-             Common.WelcomeTextWindow();
-             Common.CustomerOrAdmin();
-            
-
+            await Common.CustomerOrAdminAsync();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace VardagshörnanApp.Admin
                 using (var db = new MyDbContext())
                 {
                     Common.AllProductsTable();
-                    Console.WriteLine("Ange Produkt Id för mer detaljer (Q för att gå tillbaka):");
+                    Console.WriteLine("Ange Produkt Id för mer detaljer /Q. för att gå tillbaka");
                     string input = Console.ReadLine();
 
                     if (input.ToLower() == "q")
@@ -85,7 +85,7 @@ namespace VardagshörnanApp.Admin
             Console.WriteLine("Status        : " + featuredOrNot);
             Console.WriteLine("Beskrivning   : " + product.Description);
             Console.WriteLine("======================================================================================================================================");
-            Console.WriteLine("Tryck en valfri tangent för att gå tillbaka");
+            //Console.WriteLine("Tryck en valfri tangent för att gå tillbaka");
             Console.ReadKey();
 
         }  // apposto
@@ -188,7 +188,7 @@ namespace VardagshörnanApp.Admin
                     Thread.Sleep(1000);
                     continue; // börja om while loopen
                 }
-                Console.WriteLine("Vad vill du ändra?\n 1. Namn\n 2. Beskrivning \n3. Pris \n4. ProduktKategori\n5. Leverantör \n6. Lager");
+                Console.WriteLine("Vad vill du ändra?\n1. Namn\n2. Beskrivning \n3. Pris \n4. ProduktKategori\n5. Leverantör \n6. Lager");
                 
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
@@ -374,9 +374,9 @@ namespace VardagshörnanApp.Admin
                 try
                 {
                     db.SaveChanges();
+                    Console.ForegroundColor=ConsoleColor.Green;
                     Console.WriteLine("Startsidan har uppdaterats korrekt.");
-                    Shop.FeaturedProductsWindows();
-                    Console.ReadKey();
+                    Console.ResetColor();
                 }
                 catch(Exception ex)
                 {

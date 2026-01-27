@@ -10,67 +10,6 @@ namespace VardagshörnanApp.Admin
 {
     internal class ChangeCustomer
     {
-        public static void ChangeCustomersMenu()
-        {
-        //    Console.Clear();
-        //    while (true)
-        //    {
-        //        Console.Clear();
-        //        Common.WelcomeTextWindow();
-        //        //helpers.AllCustomers();
-        //        List<string> topText8 = new List<string> { "1. Se Kundlistan", "2. Ändra kunduppgifter", "3. Se Beställninghistorik", "0. Tillbaka" };
-        //        var windowTop8 = new Window("Välj en alternativ:", 52, 15, topText8);
-        //        windowTop8.Draw();
-
-        //        if (int.TryParse(Console.ReadLine(), out int choice))
-        //        {
-        //            switch (choice)
-        //            {
-        //                case 1:
-        //                    Common.WelcomeTextWindow();
-        //                    AllCustomersForAdmin();
-        //                    break;
-        //                case 2:
-        //                    ChangeCustomersDetails();
-        //                    break;
-        //                case 3:
-        //                    OrdersHistorik();
-        //                    break;
-        //                case 0:
-        //                    return;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Försök igen!");
-        //            return;
-        //        }
-        //        Console.ReadKey();
-        //    }
-        }
-        public static void AllProductsForAdmin()
-        {
-            Console.Clear();
-            Console.WriteLine("================================================================================");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("                            LINA SHOP - KATALOG                              ");
-            Console.ResetColor();
-            Console.WriteLine("================================================================================");
-            Console.WriteLine($"|{"ProduktId",-10} | {"Produkt namn ",-20} | {"Pris",-10} | {"Lager",-4} | {"Leverantör",-10} | {"Utvald",-8}|");
-            Console.WriteLine("--------------------------------------------------------------------------------");
-            // skriva ut varje produkt
-            using (var db = new MyDbContext())
-            {
-                foreach (var p in db.Products)
-                {
-
-                    Console.WriteLine($"|{p.Id,-10} | {p.Name,-20} | {p.Price,-10} | {p.Stock,-4} | {p.Supplier,-10} | {p.IsFeatured,-8} |");
-                }
-                Console.WriteLine("--------------------------------------------------------------------------------");
-
-            }
-            return;
-        }
         public static void AllCustomersForAdmin()
         {
             while (true)
@@ -87,7 +26,7 @@ namespace VardagshörnanApp.Admin
                                     .ToList();
                     foreach (var c in db.Customers)
                     {
-                        Console.WriteLine($"|{c.Id,-3} |{c.FirstName} {c.LastName,-19} |{c.City, -15}|{c.EmailAdress,-25} |{c.PhoneNumber,-15} |{c.Orders.Count,-4}");
+                        Console.WriteLine($"|{c.Id,-3} |{c.FirstName}{c.LastName,-19} |{c.City, -15}|{c.EmailAdress,-25} |{c.PhoneNumber,-15} |{c.Orders.Count,-4}");
                         Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------------");
 
                     }
@@ -178,13 +117,19 @@ namespace VardagshörnanApp.Admin
         }
         public static void OrdersHistorik()
         {
-            Console.Clear();
-            AllCustomersForAdmin();
-            Console.WriteLine("Ange Kund Id:");
-
             while (true)
             {
-                if (!int.TryParse(Console.ReadLine(), out int customerId))
+                Console.Clear();
+                AllCustomersForAdmin();
+                Console.WriteLine("Ange Kund Id: (eller tryck Q för att gå tillbaka)");
+                string input = Console.ReadLine();
+
+                if (input.ToLower() == "q")
+                {
+                    break;
+                }// går tillbaka
+
+                if (!int.TryParse(input, out int customerId))
                 {
                     Console.WriteLine("Fel val! Försök igen.");
                     continue;
@@ -192,8 +137,10 @@ namespace VardagshörnanApp.Admin
                 using (var db = new MyDbContext())
                 {
                     var orders = db.Orders
-                        .Where(o => o.CustomerId == customerId)
-                        .ToList();
+                                .Where(o => o.CustomerId == customerId)
+                                .Include(o => o.OrderItems)  // för att nå alla prular i order
+                                .ThenInclude(oi => oi.Product) // för att kunna använda produkt info
+                                .ToList();
 
                     if (orders.Count == 0)
                     {
@@ -204,20 +151,24 @@ namespace VardagshörnanApp.Admin
                         foreach (var o in orders)
                         {
                             Console.WriteLine("-----------------------------------------------------------------------------------------------------");
-                            Console.WriteLine("Order Id           : "+ o.Id);
-                            Console.WriteLine("Datum              : "+ o.OrderDate);
-                            Console.WriteLine("Betalning          : "+ o.PaymentMethod);
-                            Console.WriteLine("Frakt              : "+ o.ShippingMethod);
-                            Console.WriteLine("Totalt             : "+ o.TotalAmount);
+                            Console.WriteLine("Order Id           : " + o.Id);
+                            Console.WriteLine("Datum              : " + o.OrderDate);
+                            Console.WriteLine("Betalning          : " + o.PaymentMethod);
+                            Console.WriteLine("Frakt              : " + o.ShippingMethod);
+                            Console.WriteLine("Totalt             : " + o.TotalAmount);
+                            Console.WriteLine();
+                            foreach (var item in o.OrderItems)
+                            {
+                                Console.WriteLine(item.Product.Name + " | Antal: " + item.Quantity + " | Pris per styck: " + item.Price);
+                            }
+                            Console.WriteLine("-----------------------------------------------------------------------------------------------------");
                         }
-                        Console.WriteLine("-----------------------------------------------------------------------------------------------------");
-                        Console.WriteLine("Kunden har handlat: "+orders.Count+" gånger hos oss.");
+                        Console.WriteLine("Kunden har handlat: " + orders.Count+" gånger hos oss.");
                     }
                 }
                 Console.ReadKey();
                 break;
             }
-
         }
         public static void ChangeCustomerWindow()
         {

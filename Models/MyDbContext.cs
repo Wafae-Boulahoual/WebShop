@@ -14,13 +14,16 @@ namespace VardagshörnanApp.Models
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Administrator>Administrators { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS01;Database=VardagshörnanDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(@"Server=tcp:wafaesdb.database.windows.net,1433;Initial Catalog=MyDbWafae;Persist Security Info=False;User ID=dbadmin;Password=System25Demo;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+           // optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS01;Database=VardagshörnanDb;Trusted_Connection=True;TrustServerCertificate=True;");
+
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) // för att inte deleta en kategori som innehåller produkter
+        protected override void OnModelCreating(ModelBuilder modelBuilder) // för att inte ta bort en kategori som innehåller produkter
         {
             modelBuilder.Entity<Product>()
            .HasOne(p => p.Category)

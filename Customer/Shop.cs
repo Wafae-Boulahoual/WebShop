@@ -116,9 +116,9 @@ namespace VardagshörnanApp.Customer
                 else
                 {
                     Cart.AddItemToCart(product);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Produkten har lagts till varukorgen!");
-                    Console.ResetColor();
+                    //Console.ForegroundColor = ConsoleColor.Green;
+                    //Console.WriteLine("Produkten har lagts till varukorgen!");
+                    //Console.ResetColor();
                 }
                 Console.WriteLine("Tryck valfri tangent för fortsätta.");
                 Console.ReadKey();
@@ -141,17 +141,20 @@ namespace VardagshörnanApp.Customer
             windowTop11.Draw();
 
         }
-        public static List<Product> FeaturedProductsWindows()
+        public static async Task<List<Product>> TakeFeaturedProductsAsync()
         {
             using (var db = new MyDbContext())
             {
-                var featuredProducts = db.Products
-                    .Include(p=>p.Category)
+                var featuredProducts = await db.Products
+                    .Include(p => p.Category)
                     .Where(p => p.IsFeatured)
                     .Take(3)
-                    .ToList();
-                
-
+                    .ToListAsync();
+                return featuredProducts;
+            }
+        }
+        public static void FeaturedProductsWindows(List<Product>featuredProducts)
+        { 
                 //de tre utvalda produkter på start sidan
                 List<string> window1Text = new List<string>
                 {
@@ -182,10 +185,9 @@ namespace VardagshörnanApp.Customer
 
                 var window3 = new Window("Erbjudande 3", 108, 15, window3Text);
                 window3.Draw();
-
-                return featuredProducts;
+;
             }
-        } // apposto
+         // apposto
         public static void SearchProductCustomer() //apposto
         {
             var product = Common.SearchBarre();

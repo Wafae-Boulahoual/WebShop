@@ -22,7 +22,13 @@ namespace VardagshörnanApp.Customer
             decimal subTotal = 0;
             if (cart.Count == 0)
             {
-                Console.WriteLine("Varukorgen är tom.");
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                List<string> topText1 = new List<string> { "", "      Din varukorg är tom!       ", "" };
+                var window = new Window("", 50, 15, topText1);
+                window.Draw();
+                Thread.Sleep(1000);
+                Console.ResetColor();
                 return 0;
             }
             else
@@ -36,6 +42,8 @@ namespace VardagshörnanApp.Customer
             }
             Console.WriteLine("-------------------------------");
             Console.WriteLine("Totalt före moms & frakt: " + subTotal + " kr");
+            UpdateCart();
+            
             return subTotal;
         }
         public static void UpdateCart()
@@ -140,7 +148,9 @@ namespace VardagshörnanApp.Customer
                 }
                 else
                 {
+                    Console.ForegroundColor= ConsoleColor.Red;
                     Console.WriteLine("Kan inte lägga till fler än tillgängligt lager!");
+                    Console.ResetColor();
                 }
             }
             else
@@ -148,7 +158,9 @@ namespace VardagshörnanApp.Customer
                 // Om slut i lager
                 if (product.Stock < 1)
                 {
+                    Console.ForegroundColor=ConsoleColor.Red;
                     Console.WriteLine("Produkten är slut i lager!");
+                    Console.ResetColor();
                     return;
                 }
 
@@ -161,7 +173,9 @@ namespace VardagshörnanApp.Customer
                 };
 
                 cart.Add(item);
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(product.Name + " har lagts till i varukorgen!");
+                Console.ResetColor();
             }
 
             // update summan

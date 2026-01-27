@@ -19,8 +19,21 @@ namespace VardagshörnanApp.Customer
         } // apposto
         public static Models.Customer RegisterNewCustomer()
         {
+            if (Session.LoggedInCustomer != null)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                List<string> topText1 = new List<string> { "", "      Du är redan inloggad!       ", "" };
+                var window = new Window("", 50, 15, topText1);
+                window.Draw();
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                Thread.Sleep(1000);
+                return Session.LoggedInCustomer; // returnera den kunden som är redan loggad
+            }
             Console.Clear();
             Common.WelcomeTextWindow();
+            Console.SetCursorPosition(0, 12);
             using (var db = new MyDbContext())
             {
                 var customer = new Models.Customer();
@@ -49,7 +62,9 @@ namespace VardagshörnanApp.Customer
 
                     if (emailExists)
                     {
+                        Console.ForegroundColor= ConsoleColor.Red;
                         Console.WriteLine("Denna e-post är redan registrerad, försök en annan.");
+                        Console.ResetColor();
                     }
 
                 } 
@@ -74,7 +89,9 @@ namespace VardagshörnanApp.Customer
                     confirmPassword = Console.ReadLine();
                     if (password != confirmPassword)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Lösenorden matchar inte. Försök igen.");
+                        Console.ResetColor();
                         Console.WriteLine();
                     }
                 }
@@ -88,11 +105,17 @@ namespace VardagshörnanApp.Customer
                 }
                 catch (Exception ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Registrering misslyckades: " + ex.Message);
+                    Console.ResetColor();
                 }
                 
                 Session.LoggedInCustomer = customer;
+                CustomerPage.LoggedInCustomer= customer;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Grattis, " + customer.FirstName + "! Din registrering är klar.");
+                Console.WriteLine();
+                Console.ResetColor();
                 Console.WriteLine("Användarnamn: " + customer.EmailAdress);
                 Console.ReadKey();
                 return customer;
@@ -100,6 +123,17 @@ namespace VardagshörnanApp.Customer
         }
         public static Models.Customer CustomerLogin()
         {
+            if (Session.LoggedInCustomer != null)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                List<string> topText1 = new List<string> { "", "      Du är redan inloggad!       ", "" };
+                var window = new Window("", 50, 15, topText1);
+                window.Draw();
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                return Session.LoggedInCustomer; // returnera den kunden som är redan loggad
+            }
             Console.Clear();
             using (var db = new MyDbContext())
             {
@@ -114,43 +148,52 @@ namespace VardagshörnanApp.Customer
 
                 if (customer == null)
                 {
-                    Console.WriteLine("Fel inloggning!");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    List<string> topText1 = new List<string> { "", "      Fel loggning!       ", "" };
+                    var window = new Window("", 50, 15, topText1);
+                    window.Draw();
+                    Thread.Sleep(1000);
                     return null;
                 }
 
+                CustomerPage.LoggedInCustomer = customer; 
                 Session.LoggedInCustomer = customer;
-                Console.WriteLine("Inloggning lyckades!");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Clear();
+                List<string> topText = new List<string> { "", "      Inloggning lyckades!       ", "" };
+                var waitingWindow = new Window("", 50, 15, topText);
+                waitingWindow.Draw();
+                Console.ResetColor();
+                Thread.Sleep(1000);
                 return customer;
 
             }
         }
-        public static Models.Customer HandleLoginOrRegister() // fixa metoden för login och denna
-            // om jag först loggar in i menyn och sen lägger produkter på varukorgen sen vill
-            //checka ut, den kommer inte ihåg att har redan loggat in /måste fixas
+        public static Models.Customer HandleLoginOrRegister() 
         {
-            // Om kunden är redan loggad vi använder den
             if (Session.LoggedInCustomer != null)
             {
                 return Session.LoggedInCustomer;
             }
 
-            Console.WriteLine("Du måste logga in eller registrera dig:");
-            Console.WriteLine("1. Logga in");
-            Console.WriteLine("2. Registrera dig");
-
+            List<string> topText1 = new List<string> { "1. Logga in","2. Registrera dig" };
+            var window = new Window("Du behöver logga in eller registrera dig: ", 50, 15, topText1);
+            window.Draw();
             string choice = Console.ReadLine();
 
             if (choice == "1")
             {
-                return RegisterCustomer.CustomerLogin();
+                return CustomerLogin();
             }
             else if (choice == "2")
             {
-                return RegisterCustomer.RegisterNewCustomer();
+                return RegisterNewCustomer();
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Fel val.");
+                Console.ResetColor();
                 return null;
             }
         }

@@ -130,7 +130,7 @@ namespace VardagshörnanApp.Customer
 
             using (var db = new MyDbContext())
             {
-                try
+                try // försök att spara ordern coh att spara den nya lager i databasen
                 {
                     var order = new Order
                     {
@@ -161,7 +161,7 @@ namespace VardagshörnanApp.Customer
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Beställningen är genomförd!");
                     Console.ResetColor();
-
+                    Thread.Sleep(1000);
                     cart.Clear();
                     AfterCheckOut.AfterCheckoutMenu(customer);
                 }
