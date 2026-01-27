@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,19 @@ namespace VardagshörnanApp.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=tcp:wafaesdb.database.windows.net,1433;Initial Catalog=MyDbWafae;Persist Security Info=False;User ID=dbadmin;Password=System25Demo;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-           // optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS01;Database=VardagshörnanDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<Program>()
+                .Build();
 
+            var connStr = config["MySettings:ConnectionString"];
+            optionsBuilder.UseSqlServer(connStr);
         }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(@"Server=tcp:wafaesdb.database.windows.net,1433;Initial Catalog=MyDbWafae;Persist Security Info=False;User ID=dbadmin;Password=System25Demo;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        //   //optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS01;Database=VardagshörnanDb;Trusted_Connection=True;TrustServerCertificate=True;");
+
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) // för att inte ta bort en kategori som innehåller produkter
         {

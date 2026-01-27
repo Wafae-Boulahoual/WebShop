@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32c2c76a9d5271b6bf8b38927962426a8aa44dfe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+023f7eac3831dd64130a16216e033a5fbfcd9547")]
 [assembly: System.Reflection.AssemblyProductAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VardagshörnanApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

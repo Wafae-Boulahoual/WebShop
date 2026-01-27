@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace VardagshörnanApp.Admin
                     case 'x': ChangeCustomer.AllCustomersForAdmin(); break;
                     case 'y': ChangeCustomer.ChangeCustomersDetails(); break;
                     case 'z': ChangeCustomer.OrdersHistorik(); break;
-                    case 'w': Statistics.Queries(); break;
+                    case 'w': Statistics.AllQueries(); break;
                     case 's': ChangeProduct.SearchProductAdmin(); break; 
                     case 'q': Session.LoggedInAdministrator = null; LoggedInAdministrator = null; return;
                     default: 
@@ -55,20 +56,25 @@ namespace VardagshörnanApp.Admin
             ChangeCustomer.ChangeCustomerWindow();
             Common.SearchAProductWindow();
             Statistics.StatisticsWindow();
-        } // apposto
+        } 
         public static void LoginAdmin()
         {
             //using (var db = new MyDbContext())
             //{
+            //    var config = new ConfigurationBuilder()
+            //        .AddUserSecrets<Program>()
+            //        .Build();
+
+            //    string adminPassword = config["MySettings:AdminPassword"];
+
             //    var administrators = new List<Administrator>
             //    {
-            //        new Administrator { UserName = "admin85", Password = "123456" }
+            //        new Administrator { UserName = "admin85", Password = adminPassword }
             //    };
 
             //    db.Administrators.AddRange(administrators);
             //    db.SaveChanges();
             //}
-
         }
         public static async Task<Models.Administrator?> AdminCheckLoginAsync()
         {
