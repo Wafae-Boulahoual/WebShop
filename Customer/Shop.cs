@@ -19,7 +19,7 @@ namespace VardagshörnanApp.Customer
                 using (var db = new MyDbContext())
                 {
                     Console.Clear();
-                    List<Product> products; // hämtar alla produkter eller produkter i kategorier
+                    List<Product> products; 
 
                     if (categoryId == null) // om ingen parameter anges då visas alla produkter
                     {
@@ -27,7 +27,7 @@ namespace VardagshörnanApp.Customer
                             .Include(p => p.Category)
                             .ToList();
                     }
-                    else // annars visar produkterna i kategorin med denna Id-n
+                    else // annars visar produkterna i denna kategorin 
                     {
                         products = db.Products 
                             .Include(p => p.Category)
@@ -35,8 +35,9 @@ namespace VardagshörnanApp.Customer
                             .ToList();
                     }
 
+
                     Common.AllProductsTable(categoryId?? 0); // om ingen parameter => visas alla produkter
-                                                             // om en parameter !=0 => visas produkterna i kategorin med denna Id-n
+                                                             // om en parameter > 0 => visas produkterna i den specifika kategorin
 
                     Console.WriteLine("Ange Produkt Id för mer detaljer (Q för att gå tillbaka):");
                     string input = Console.ReadLine();
@@ -57,15 +58,15 @@ namespace VardagshörnanApp.Customer
                         break;
                     }
 
-                    // från products tar vi den produkten med den Id-n
+                    // Hämtar produkten med det angivna ID 
                     var productToSee = products.SingleOrDefault(p => p.Id == IdToSee);
 
                     if (productToSee == null)
                     {
                         Console.ForegroundColor= ConsoleColor.Red;
-                        Console.WriteLine("Produkten hittades inte i denna kategori!");
+                        Console.WriteLine("Produkten hittades inte!");
                         Console.ResetColor();
-                        Console.ReadKey();
+                        Thread.Sleep(1000);
                         continue;
                     }
 
@@ -73,7 +74,7 @@ namespace VardagshörnanApp.Customer
                 }
             }
         }
-        public static void ProductDetailsForCustomer(Product product) // apposto
+        public static void ProductDetailsForCustomer(Product product) 
         {
             Console.Clear();
             string stockMessage;
@@ -110,15 +111,16 @@ namespace VardagshörnanApp.Customer
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Produkten är slut i lager och kan inte läggas till varukorgen.");
                     Console.ResetColor();
+                    Console.WriteLine("Tryck en valfri tangent för att fortsätta.");
                     Console.ReadKey();
                     return;
                 }
                 else
                 {
                     Cart.AddItemToCart(product);
-                    //Console.ForegroundColor = ConsoleColor.Green;
-                    //Console.WriteLine("Produkten har lagts till varukorgen!");
-                    //Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Produkten har lagts till varukorgen!");
+                    Console.ResetColor();
                 }
                 Console.WriteLine("Tryck valfri tangent för fortsätta.");
                 Console.ReadKey();
@@ -126,18 +128,18 @@ namespace VardagshörnanApp.Customer
             if (choice == 'q') 
                 return;
         }
-        public static void CustomerWindow() //apposto
+        public static void CustomerWindow() 
         {
 
             List<string> topText11 = new List<string> { "A. Alla produkter", "V. Varukorg", "Q. Start sida" };
-            var windowTop11 = new Window("Meny", 12, 25, topText11);
+            var windowTop11 = new Window("Meny", 2, 25, topText11);
             windowTop11.Draw();
 
         }
-        public static void ProductsIncategoriesWindow() // apposto
+        public static void ProductsIncategoriesWindow() 
         {
             List<string> topText11 = new List<string> { "1. Hem & Dekoration", "2. Kök & Tillbehör ", "3. Böcker & Kontorsmaterial " };
-            var windowTop11 = new Window("Kategorier: ", 57, 25, topText11);
+            var windowTop11 = new Window("Kategorier: ", 30, 25, topText11);
             windowTop11.Draw();
 
         }
@@ -159,7 +161,7 @@ namespace VardagshörnanApp.Customer
                 List<string> window1Text = new List<string>
                 {
                     featuredProducts[0].Name,
-                    $"Pris: {featuredProducts[0].Price} kr",
+                    "Pris: " + featuredProducts[0].Price + " kr",
                     "Tryck X för mer detaljer."
                 };
 
@@ -169,7 +171,7 @@ namespace VardagshörnanApp.Customer
                 List<string> window2Text = new List<string>
                 {
                     featuredProducts[1].Name,
-                    $"Pris: {featuredProducts[1].Price} kr",
+                    "Pris: " + featuredProducts[1].Price + " kr",
                     "Tryck Y för mer detaljer."
                 };
 
@@ -179,7 +181,7 @@ namespace VardagshörnanApp.Customer
                 List<string> window3Text = new List<string>
                 {
                     featuredProducts[2].Name,
-                    $"Pris: {featuredProducts[2].Price} kr",
+                    "Pris: " + featuredProducts[2].Price + " kr",
                     "Tryck Z för mer detaljer."
                 };
 
@@ -187,14 +189,66 @@ namespace VardagshörnanApp.Customer
                 window3.Draw();
 ;
             }
-         // apposto
-        public static void SearchProductCustomer() //apposto
+        public static void SearchProductCustomer()
         {
-            var product = Common.SearchBarre();
-            ProductDetailsForCustomer(product);
+            var products = Common.SearchBarre(); // listan som metoden returnerade
 
+            if (products.Count == 0)
+                return;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Resultat av sökning:");
+                Console.ResetColor();
+                Console.WriteLine("===================================================================================================================");
+
+                foreach (var product in products)
+                {
+                    string stockMessage;
+                    if (product.Stock > 5)
+                        stockMessage = "Tillgänglig";
+                    else if (product.Stock >= 1)
+                        stockMessage = "Få kvar i lager";
+                    else
+                        stockMessage = "Slut i lager";
+
+                    Console.WriteLine("ID: " + product.Id + " | Namn: " + product.Name + " | Pris: " + product.Price + " kr | Lager: " + stockMessage + " | Kategori: " + product.Category.Name);
+                }
+
+                Console.WriteLine("-------------------------------------------------------------------------------------------------------------------");
+                Console.WriteLine("Skriv Produkt ID för mer detaljer, eller Q för att gå tillbaka: ");
+                string input = Console.ReadLine();
+
+                if (input.ToLower() == "q")
+                {
+                    break;
+                }
+
+                if (!int.TryParse(input, out int chosenId))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ID ogiltigt! Försök igen.");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    continue;
+                }
+
+                var chosenProduct = products.FirstOrDefault(p => p.Id == chosenId);
+                if (chosenProduct == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Produkten hittades inte! Försök igen.");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    continue;
+                }
+
+                // Visa produktens detaglier
+                ProductDetailsForCustomer(chosenProduct);
+            }
         }
-      
     }
 }
 

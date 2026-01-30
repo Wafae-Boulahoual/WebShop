@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿using Azure.Core;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,15 @@ namespace VardagshörnanApp.Customer
 {
     internal class CheckOut
     {
-        public static void Checkout(List<OrderItem> cart) // dividera metoden, för lång!
+        public static void Checkout(List<OrderItem> cart) 
         {
+            Console.Clear();
             if (cart.Count == 0)
             {
                 Console.WriteLine("Varukorgen är tom.");
                 return;
             }
 
-            Console.Clear();
             Console.WriteLine("CHECKOUT");
             Console.WriteLine("--------");
 
@@ -38,7 +39,7 @@ namespace VardagshörnanApp.Customer
                 }
             }
 
-            decimal shippingCost = 0; // initialisering
+            decimal shippingCost = 0; 
             ShippingMethod shippingMethod;
 
             while (true)
@@ -130,7 +131,7 @@ namespace VardagshörnanApp.Customer
 
             using (var db = new MyDbContext())
             {
-                try // försök att spara ordern coh att spara den nya lager i databasen
+                try // försök att spara ordern och att spara den nya lager i databasen
                 {
                     var order = new Order
                     {

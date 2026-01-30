@@ -10,7 +10,7 @@ using VardagshörnanApp.Models;
 
 namespace VardagshörnanApp
 {
-    internal class Common
+    internal class Common // innehåller metoder som är gemensamma för både admin och kund
     {
         public static void WelcomeTextWindow()
         {
@@ -18,8 +18,8 @@ namespace VardagshörnanApp
             var windowTop = new Window("", 30, 5, topText);
             windowTop.Draw();
         }
-        public static void WelcomeUser(Models.Administrator? administrator, Models.Customer? customer) 
-            // för att kunna använda den till admin och kund
+        public static void WelcomeUser(Administrator? administrator, Models.Customer? customer)
+         // Om administrator är null används metoden för kunden, och vice versa.
         {
             string name;
             if (administrator != null)
@@ -34,13 +34,12 @@ namespace VardagshörnanApp
             {
                 name = "Gäst"; 
             }
-            
             List<string> topText = new List<string> {"Välkommen "+name};
             var windowTop = new Window("", 60, 1, topText);
             windowTop.Draw();
-            ;
         }
         public static async Task CustomerOrAdminAsync()
+        // Async eftersom metoden anropar asynkrona metoder 
         {
             while (true)
             {
@@ -53,21 +52,28 @@ namespace VardagshörnanApp
                 char role = char.ToLower(Console.ReadKey().KeyChar);
                 if (role == 'k')
                 {
-                    await CustomerPage.CustomerMenuAsync(); // kund sidan
+                    await CustomerPage.CustomerMenuAsync(); // går till kund sidan
                 }
                 else if (role == 'a')
                 {
                     var admin = await AdminPage.AdminCheckLoginAsync();
-                    if (admin != null) // om admin kunde logga in
+                    if (admin != null) // om admin kan logga in
                     {
-                        AdminPage.AdminMenu(); // admin sidan
+                        AdminPage.AdminMenu(); // går till admin sidan
                     }
-                    // admin sidan
+                    else 
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Fel inloggning! Försök igen.");
+                        Console.ResetColor();
+                        await Task.Delay(1000);
+                        continue; 
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Fel val! Försök igen");
-                    continue; // börjar om while loopen
+                    continue; 
                 }
                 Console.ReadKey();
             }
@@ -86,7 +92,8 @@ namespace VardagshörnanApp
             //    db.SaveChanges();
             //}
         }
-        public static void AllProductsTable(int categoryId = 0) // för kund + admin + allaprodukter + produkter i kategori
+        public static void AllProductsTable(int categoryId = 0) 
+            // Visar alla produkter, eller produkter i en viss kategori om categoryId är > 0
         {
             Console.Clear();
             Console.WriteLine("======================================================================================================================");
@@ -100,7 +107,7 @@ namespace VardagshörnanApp
             using (var db = new MyDbContext())
             {
                 var products = db.Products
-                               .Include(p => p.Category).ToList(); // för att nå kategori namn
+                               .Include(p => p.Category).ToList(); // för att visa kategori namnet
 
                 if (categoryId >0)
                 {
@@ -152,13 +159,13 @@ namespace VardagshörnanApp
             //    db.SaveChanges();
             //}
         }
-        public static void SearchAProductWindow() // som används i både kund och admin sidan
+        public static void SearchAProductWindow() 
         {
             List<string> topText2 = new List<string> { "Tryck S för att söka en produkt" };
             var windowTop2 = new Window("", 1, 1, topText2);
             windowTop2.Draw();
         }
-        public static Product SearchBarre()
+        public static List<Product> SearchBarre() 
         {
             Console.Clear();
             Console.WriteLine("Vilken produkt söker du?");
@@ -166,22 +173,23 @@ namespace VardagshörnanApp
 
             using (var db = new MyDbContext())
             {
-                var product = db.Products
-                                .Include(p => p.Category) // För att nå kategori namn
-                                .FirstOrDefault(p => p.Name.ToLower().Contains(input.ToLower())); 
+                // Hämtar alla produkter som innehåller sökordet
+                var products = db.Products
+                                 .Include(p => p.Category)
+                                 .Where(p => p.Name.ToLower().Contains(input.ToLower()))
+                                 .ToList();
 
-                if (product == null)
+                if (products.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Ingen produkt hittades.");
                     Console.ResetColor();
                     Console.ReadKey();
-                    return null;
                 }
-
-                return product;
+                return products; //returnerar ändå en lista som kan vara tom om ingen produkt hittades
             }
         }
+        
         public static void WaitingWindow()
         {
             Console.ForegroundColor = ConsoleColor.Green;

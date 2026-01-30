@@ -12,13 +12,12 @@ namespace VardagshörnanApp.Admin
 {
     internal class AdminPage
     {
-        public static Administrator LoggedInAdministrator;
         public static void AdminMenu()
         {
             while (true)
             {
                 Console.Clear();
-                Common.WelcomeUser(LoggedInAdministrator, null);
+                Common.WelcomeUser(Session.LoggedInAdministrator, null);
                 AdminPageWindows();
                 char choice = char.ToLower(Console.ReadKey().KeyChar);
                 switch (choice)
@@ -37,7 +36,7 @@ namespace VardagshörnanApp.Admin
                     case 'z': ChangeCustomer.OrdersHistorik(); break;
                     case 'w': Statistics.AllQueries(); break;
                     case 's': ChangeProduct.SearchProductAdmin(); break; 
-                    case 'q': Session.LoggedInAdministrator = null; LoggedInAdministrator = null; return;
+                    case 'q': Session.LoggedInAdministrator = null; return; // loggar ut admin
                     default: 
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Fel val! försök igen ");
@@ -46,9 +45,8 @@ namespace VardagshörnanApp.Admin
                         break;
                 } 
             }
-
-        } // testa sen
-        public static void AdminPageWindows()
+        } 
+        public static void AdminPageWindows() 
         {
             Common.WelcomeTextWindow();
             ChangeProduct.ChangeProductWindow();
@@ -57,32 +55,31 @@ namespace VardagshörnanApp.Admin
             Common.SearchAProductWindow();
             Statistics.StatisticsWindow();
         } 
-        public static void LoginAdmin()
+        public static void LoginAdmin() // lösenordet står på user secrets
         {
-            //using (var db = new MyDbContext())
-            //{
-            //    var config = new ConfigurationBuilder()
-            //        .AddUserSecrets<Program>()
-            //        .Build();
+            using (var db = new MyDbContext())
+            {
+                var config = new ConfigurationBuilder()
+                    .AddUserSecrets<Program>()
+                    .Build();
 
-            //    string adminPassword = config["MySettings:AdminPassword"];
+                string adminPassword = config["MySettings:AdminPassword"];
 
-            //    var administrators = new List<Administrator>
-            //    {
-            //        new Administrator { UserName = "admin85", Password = adminPassword }
-            //    };
-
-            //    db.Administrators.AddRange(administrators);
-            //    db.SaveChanges();
-            //}
+                var administrators = new List<Administrator>
+                {
+                    new Administrator { UserName = "admin85", Password = adminPassword }
+                };
+                // db.Administrators.AddRange(administrators); 
+                //db.SaveChanges();
+            }
         }
-        public static async Task<Models.Administrator?> AdminCheckLoginAsync()
+        public static async Task<Administrator?> AdminCheckLoginAsync()
         {
             using (var db = new MyDbContext())
             {
                 Console.Write("Ange användarnamn: ");
                 string username = Console.ReadLine();
-
+                Console.WriteLine();
                 Console.Write("Ange lösenord: ");
                 string password = Console.ReadLine();
 
@@ -98,11 +95,10 @@ namespace VardagshörnanApp.Admin
                     Console.WriteLine("Fel inloggning!");
                     await Task.Delay(1000);
                     Console.ResetColor();
-                    return null;
+                    return null; //om admin kan inte logga in
                 }
 
-                LoggedInAdministrator = administrator;
-                Session.LoggedInAdministrator = administrator;
+                Session.LoggedInAdministrator = administrator; // admin är loggat in
                 Console.ForegroundColor = ConsoleColor.Green;
                 List<string> topText = new List<string> { "", "      Inloggning lyckades!      ", "" };
                 var waitingWindow = new Window("", 50, 15, topText);

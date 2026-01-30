@@ -46,17 +46,21 @@ namespace VardagshörnanApp.Admin
                 Console.WriteLine("Vilken kund vill du ändra detaljer på? Ange Kund Id : ");
                 if (!int.TryParse(Console.ReadLine(), out int ChosenId))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fel Id! Försök igen.");
+                    Console.ResetColor();
                     Thread.Sleep(1000);
-                    continue; // börja om while loopen
+                    continue; 
                 }
                 Console.WriteLine("Vad vill du ändra? : ");
-                Console.WriteLine("\n 1. Förnamn \n2.Efternamn \n3. Adress \n4. Stad \n5. Land \n6. Mejl adress \n7. Födelsdatum");
+                Console.WriteLine("\n1. Förnamn \n2. Efternamn \n3. Adress \n4. Stad \n5. Land \n6. Mejl adress \n7. Födelsdatum");
                
                 if (!int.TryParse(Console.ReadLine(), out int choice))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fel val! Försök igen.");
-                    continue; // börja om while loopen
+                    Console.ResetColor();
+                    continue; 
                 }
                 using (var db = new MyDbContext())
                 {
@@ -65,8 +69,10 @@ namespace VardagshörnanApp.Admin
                                             select c).SingleOrDefault();
                     if (CustomerToUpdate == null)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Kunden hittades inte!");
-                        continue; // börja om while loopen
+                        Console.ResetColor();
+                        continue; 
                     }
                     switch (choice)
                     {
@@ -104,11 +110,16 @@ namespace VardagshörnanApp.Admin
                             CustomerToUpdate.BirthDate = newBirthDate;
                             break;
                         default:
+                            Console.ForegroundColor= ConsoleColor.Red;
                             Console.WriteLine("Fel val! Försök igen");
+                            Console.ResetColor();
                             break;
                     }
                     db.SaveChanges();
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Uppdateringen lyckades.");
+                    Console.ResetColor();
                 }
                 Console.WriteLine("Tryck på valfri tangent för att fortsätta...");
                 Console.ReadKey();
@@ -121,30 +132,34 @@ namespace VardagshörnanApp.Admin
             {
                 Console.Clear();
                 AllCustomersForAdmin();
-                Console.WriteLine("Ange Kund Id: (eller tryck Q för att gå tillbaka)");
+                Console.WriteLine("Ange Kund Id eller tryck Q för att gå tillbaka)");
                 string input = Console.ReadLine();
 
                 if (input.ToLower() == "q")
                 {
                     break;
-                }// går tillbaka
+                }
 
                 if (!int.TryParse(input, out int customerId))
                 {
+                    Console.ForegroundColor=ConsoleColor.Red;
                     Console.WriteLine("Fel val! Försök igen.");
+                    Console.ResetColor();
                     continue;
                 }
                 using (var db = new MyDbContext())
                 {
                     var orders = db.Orders
                                 .Where(o => o.CustomerId == customerId)
-                                .Include(o => o.OrderItems)  // för att nå alla prular i order
-                                .ThenInclude(oi => oi.Product) // för att kunna använda produkt info
+                                .Include(o => o.OrderItems)  // Hämta alla produkter i varje order
+                                .ThenInclude(oi => oi.Product) // Inkludera produktinformationen för varje order
                                 .ToList();
 
                     if (orders.Count == 0)
                     {
+                        Console.ForegroundColor=ConsoleColor.Red;
                         Console.WriteLine("Inga ordrar hittades.");
+                        Console.ResetColor();
                     }
                     else
                     {
@@ -166,6 +181,7 @@ namespace VardagshörnanApp.Admin
                         Console.WriteLine("Kunden har handlat: " + orders.Count+" gånger hos oss.");
                     }
                 }
+                Console.WriteLine("Tryck en valfri tangent för att fortsätta...");
                 Console.ReadKey();
                 break;
             }

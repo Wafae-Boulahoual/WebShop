@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VardagshörnanApp
 {
-    internal class Session
+    internal static class Session
     {
         //En statisk klass för att komma ihåg vilken kund eller admin som är inloggad.
         public static Models.Customer LoggedInCustomer { get; set; }

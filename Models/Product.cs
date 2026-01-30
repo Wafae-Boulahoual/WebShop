@@ -13,10 +13,10 @@ namespace VardagshörnanApp.Models
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; } = null!; // en till många
+        public virtual Category Category { get; set; } = null!; // en till många relation
         public bool IsFeatured { get; set; } // utvalda på startsidan
         public int Stock { get; set; }
         public string Supplier { get; set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();// en till många, en product kan vara många orderItems 
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();// en till många relation
         }
 }

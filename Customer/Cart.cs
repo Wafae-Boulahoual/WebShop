@@ -12,8 +12,7 @@ namespace VardagshörnanApp.Customer
     internal class Cart
     {
         public static List<OrderItem> cart = new List<OrderItem>();
-
-        public static decimal ShowCart(List<OrderItem>Cart)
+        public static  decimal ShowCart(List<OrderItem>Cart)
         {
             Console.Clear();
             Console.WriteLine("Din varukorg: ");
@@ -36,53 +35,66 @@ namespace VardagshörnanApp.Customer
                 foreach (var item in cart)
                 {
                     decimal itemTotal = item.Price * item.Quantity;
-                    Console.WriteLine(item.Quantity + " St " + item.Product.Name + " | Pris: " + item.Price + "Kr ");
+                    Console.WriteLine("Produkt Id : " + item.ProductId + "| " + item.Quantity + " St " + item.Product.Name + " | Pris: " + item.Price + "Kr ");
                     subTotal += itemTotal;
                 }
             }
             Console.WriteLine("-------------------------------");
             Console.WriteLine("Totalt före moms & frakt: " + subTotal + " kr");
-            UpdateCart();
-            
             return subTotal;
         }
         public static void UpdateCart()
-        { 
-            Console.WriteLine("\n U. Uppdatera antal \n C. Checka ut \n Q. Tillbaka");
-            if (char.TryParse(Console.ReadLine(), out char choice))
-            {
-                switch (char.ToLower(choice))
+        {
+            Console.WriteLine("U. Uppdatera antal");
+            Console.WriteLine("C. Checka ut ");
+            Console.WriteLine("Q. Tillbaka");
+            char choice = Console.ReadKey().KeyChar;
+            Console.WriteLine();
+            switch (char.ToLower(choice))
                 {
-                    case 'u': UpdateQuantity(cart);break;
-                    case 'c':CheckOut.Checkout(cart); break;
-                    case 'q': return;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Fel val, försök igen.");
+                case 'u': UpdateQuantity(cart);break;
+                case 'c': CheckOut.Checkout(cart); break;
+                case 'q': return;
+                default:
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Fel val, försök igen.");
+                        Console.ResetColor();
+                        break;
+                    }
             }
             Console.ReadKey();
         }
-        public static void UpdateQuantity(List<OrderItem>cart)
+        public static void UpdateQuantity(List<OrderItem> cart)
         {
-            Console.WriteLine("Vilken produkt vill du ändra kvantitet? Ange produkt namn:");
-            string input = Console.ReadLine();
+            Console.WriteLine("Ange produktens ID du vill ändra kvantitet på:");
 
-            var item = cart.FirstOrDefault(i =>
-                        i.Product.Name.ToLower().Contains(input.ToLower()));
-
-            if(item == null)
+            if (!int.TryParse(Console.ReadLine(), out int productId))
             {
-                Console.WriteLine("Produkten hittades inte i varukorgen.");
+                Console.ForegroundColor= ConsoleColor.Red;
+                Console.WriteLine("Felaktigt ID!");
+                Console.ResetColor();
                 return;
             }
 
-            Console.WriteLine("Tryck 'A' för att öka kvantitet.");
+            var item = cart.FirstOrDefault(i => i.ProductId == productId);
+
+            if (item == null)
+            {
+                Console.ForegroundColor= ConsoleColor.Red;
+                Console.WriteLine("Produkten finns inte i varukorgen.");
+                Console.ResetColor();
+                return;
+            }
+
+            Console.WriteLine("Vald produkt: " + item.Product.Name);
+            Console.WriteLine("Tryck 'O' för att öka kvantitet.");
             Console.WriteLine("Tryck 'M' för att minska kvantitet.");
 
             char choice = char.ToLower(Console.ReadKey().KeyChar);
-            if (choice == 'a')
+            Console.WriteLine();
+
+            if (choice == 'o')
             {
                 if (item.Quantity < item.Product.Stock)
                 {
@@ -91,26 +103,37 @@ namespace VardagshörnanApp.Customer
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Kan inte öka mer än tillgängligt lager!");
+                    Console.ResetColor();
                 }
             }
-            else if(choice == 'm')
+            else if (choice == 'm')
             {
                 if (item.Quantity > 1)
                 {
                     item.Quantity--;
-                    Console.WriteLine("Kvantitet updaterad. ");
+                    Console.WriteLine("Kvantitet minskad.");
                 }
-                else if (item.Quantity == 1)
+                else
                 {
-                    Console.WriteLine("Vill du ta bort produkten från din varukorg? j/n ");
+                    Console.WriteLine("Vill du ta bort produkten från varukorgen? j/n");
                     char answer = char.ToLower(Console.ReadKey().KeyChar);
-                    if(answer == 'j')
+
+                    if (answer == 'j')
                     {
                         cart.Remove(item);
+                        Console.WriteLine("Produkten borttagen från varukorgen.");
                     }
                 }
             }
+            else
+            {
+                Console.ForegroundColor= ConsoleColor.Red;
+                Console.WriteLine("Ogiltigt val.");
+                Console.ResetColor();
+            }
+
             CartWindow();
         }
         public static void CartWindow()
@@ -124,13 +147,13 @@ namespace VardagshörnanApp.Customer
             {
                 foreach (OrderItem item in cart)
                 {
-                    string text =item.Quantity+" st "+item.Product.Name+" - " + item.Price * item.Quantity + " kr";
+                    string text ="Produkt Id : " + item.ProductId + " - " + item.Quantity+" st " + item.Product.Name+" - " + item.Price * item.Quantity + " kr";
 
                     cartText.Add(text);
                 }
             }
 
-            var window = new Window("Varukorg", 100, 25, cartText);
+            var window = new Window("Varukorg", 80, 25, cartText);
             window.Draw();
         }
         public static void AddItemToCart(Product product)
@@ -173,9 +196,9 @@ namespace VardagshörnanApp.Customer
                 };
 
                 cart.Add(item);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(product.Name + " har lagts till i varukorgen!");
-                Console.ResetColor();
+                //Console.ForegroundColor = ConsoleColor.Green;
+                //Console.WriteLine(product.Name + " har lagts till i varukorgen!");
+                //Console.ResetColor();
             }
 
             // update summan

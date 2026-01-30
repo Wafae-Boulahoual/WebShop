@@ -34,9 +34,7 @@ namespace VardagshörnanApp.Admin
             TopCategoryWindow();
             Top3SuppliersWindow();
             OrdersPerCityWindow();
-            Top3CitiesWindow();
             Console.ReadKey();
-
 
         }
         public static void Top3ProductsWindow()
@@ -54,7 +52,7 @@ namespace VardagshörnanApp.Admin
             {
                 productText.Add( p.TotalSold + " st " + p.Name);
             }
-            var window = new Window("Top 3 produkter:", 2, 2, productText);
+            var window = new Window("Top 3 produkter:", 10, 4, productText);
             window.Draw();
         }
         public static void TopCategoryWindow()
@@ -70,7 +68,7 @@ namespace VardagshörnanApp.Admin
 
             var cat = connection.QuerySingle(sql);
             List<string> text = new List<string>{cat.TotalSold + " st " + cat.Name};
-            var window = new Window("Populäraste kategori", 2, 11, text);
+            var window = new Window("Populäraste kategori", 10, 12, text);
             window.Draw();
         }
         public static void OrdersPerCityWindow()
@@ -88,7 +86,7 @@ namespace VardagshörnanApp.Admin
             {
                 text.Add(c.OrdersCount + " st " + c.City);
             }
-            var window = new Window("Flest beställningar per stad",2 , 15, text);
+            var window = new Window("Flest beställningar per stad",10 , 18, text);
             window.Draw();
         }
         public static void Top3SuppliersWindow()
@@ -109,27 +107,10 @@ namespace VardagshörnanApp.Admin
                 text.Add(s.Supplier + " - " + s.TotalSales + " kr");
             }
 
-            var window = new Window("Top 3 leverantörer", 2, 22, text);
+            var window = new Window("Top 3 leverantörer", 10, 28, text);
             window.Draw();
         }
-        public static void Top3CitiesWindow()
-        {
-            using var connection = OpenConnection();
-            string sql = @"SELECT TOP 5 c.City, COUNT(o.Id) AS OrdersCount
-                            FROM Orders o
-                            JOIN Customers c ON o.CustomerId = c.Id
-                            GROUP BY c.City
-                            ORDER BY OrdersCount DESC";
 
-            var cities = connection.Query(sql);
-            List<string> text = new List<string> { "" };
-            foreach (var c in cities)
-            {
-                text.Add(c.OrdersCount + " st " + c.City);
-            }
-            var window = new Window("Flest beställningar per stad", 2, 30, text);
-            window.Draw();
-        }
     }
 }
 

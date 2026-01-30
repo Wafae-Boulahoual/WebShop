@@ -12,9 +12,9 @@ using VardagshörnanApp.Models;
 
 namespace VardagshörnanApp.Admin
 {
-    internal class ChangeProduct // apposto
+    internal class ChangeProduct 
     {
-        public static void ChangeProductWindow() // apposto
+        public static void ChangeProductWindow() 
         {
             List<string> topText3 = new List<string> { "","1. Se alla produkter","2. Lägga till en ny produkt", "3. Ändra en detalj ","4. Ta bort en produkt","5. Ändra Utvalda produkter" ,"" };
             Console.ForegroundColor = ConsoleColor.Green;
@@ -22,14 +22,14 @@ namespace VardagshörnanApp.Admin
             Console.ResetColor();
             windowTop3.Draw();
         }
-        public static void AllProductsForAdmin() // apposto
+        public static void AllProductsForAdmin() 
         {
             while (true)
             {
                 using (var db = new MyDbContext())
                 {
                     Common.AllProductsTable();
-                    Console.WriteLine("Ange Produkt Id för mer detaljer /Q. för att gå tillbaka");
+                    Console.WriteLine("Ange Produkt Id för mer detaljer eller Q. för att gå tillbaka");
                     string input = Console.ReadLine();
 
                     if (input.ToLower() == "q")
@@ -42,7 +42,7 @@ namespace VardagshörnanApp.Admin
                         Console.WriteLine("Ogiltigt ID! Försök igen.");
                         Console.ResetColor();
                         Console.ReadKey();
-                        continue; // börja om loopen
+                        continue; 
                     }
 
                     var products = db.Products
@@ -72,8 +72,8 @@ namespace VardagshörnanApp.Admin
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Produkt " + product.Name + " Beskrivning :");
+            Console.WriteLine();
             Console.ResetColor();
-
             Console.WriteLine("====================================================================================================================================");
             Console.WriteLine("ProduktId     : " + product.Id);
             Console.WriteLine("Namn          : " + product.Name);
@@ -85,22 +85,26 @@ namespace VardagshörnanApp.Admin
             Console.WriteLine("Status        : " + featuredOrNot);
             Console.WriteLine("Beskrivning   : " + product.Description);
             Console.WriteLine("======================================================================================================================================");
-            //Console.WriteLine("Tryck en valfri tangent för att gå tillbaka");
+            
             Console.ReadKey();
 
-        }  // apposto
+        }  
         public static void AddProduct()
         {
             Console.Clear();
             Console.WriteLine("Lägga till en ny Produkt");
             Console.WriteLine("------------------------");
+            Console.WriteLine();
             Console.WriteLine("Ange Produktens detaljer :");
             Console.WriteLine("Produkt namn:");
             string name = Console.ReadLine();
+            Console.WriteLine();
             Console.WriteLine("Detaljerad information :");
             string detail = Console.ReadLine();
+            Console.WriteLine();
             Console.WriteLine("Pris:");
             decimal price;
+            Console.WriteLine();
             while (!decimal.TryParse(Console.ReadLine(), out price))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -115,6 +119,7 @@ namespace VardagshörnanApp.Admin
                 Console.WriteLine("Ogiltig Id! försök igen");
                 Console.ResetColor();
             }
+            Console.WriteLine();
             Console.WriteLine("Vill du att produkten ska på start sidan? ja eller nej:");
             bool featured;
             while (true)
@@ -135,6 +140,7 @@ namespace VardagshörnanApp.Admin
                     Console.WriteLine("Skriv 'ja' eller 'nej':");
                 }
             }
+            Console.WriteLine();
             Console.WriteLine("Hur många på lager?");
             int stock;
             while(!int.TryParse(Console.ReadLine(), out stock))
@@ -143,6 +149,7 @@ namespace VardagshörnanApp.Admin
                 Console.WriteLine("Ogiltigt antal! försök igen");
                 Console.ResetColor();
             }
+            Console.WriteLine();
             Console.WriteLine("Leverantörs namn:");
             string supplier = Console.ReadLine();
             using (var db = new MyDbContext())
@@ -162,7 +169,9 @@ namespace VardagshörnanApp.Admin
                 {
                     db.Products.Add(newProduct);
                     db.SaveChanges();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Produkten har lagts till i webbshoppen.");
+                    Console.ResetColor();
                 }
                 catch(Exception ex)
                 {
@@ -171,9 +180,9 @@ namespace VardagshörnanApp.Admin
                     Console.ResetColor();
                 }
             }
-            Thread.Sleep(1000);
+            Console.WriteLine("Tryck en valfri tangent för att fortsätta.");
             Console.ReadKey();
-        }  // apposto
+        }  
         public static void ChangeDetails()
         {
             while (true)
@@ -184,9 +193,11 @@ namespace VardagshörnanApp.Admin
                 Console.WriteLine("Vilken produkt vill du ändra detaljer på? Ange Produkt Id : ");
                 if (!int.TryParse(Console.ReadLine(), out int ChosenId))
                 {
+                    Console.ForegroundColor= ConsoleColor.Red;
                     Console.WriteLine("Fel Id! Försök igen.");
+                    Console.ResetColor();
                     Thread.Sleep(1000);
-                    continue; // börja om while loopen
+                    continue; 
                 }
                 Console.WriteLine("Vad vill du ändra?\n1. Namn\n2. Beskrivning \n3. Pris \n4. ProduktKategori\n5. Leverantör \n6. Lager");
                 
@@ -276,7 +287,7 @@ namespace VardagshörnanApp.Admin
                 return;
             }
 
-        } // apposto
+        } 
         public static void DeleteAProduct()
         {
 
@@ -314,14 +325,40 @@ namespace VardagshörnanApp.Admin
                 }
             }
             Console.ReadKey();
-        } // apposto
-        
-        public static void SearchProductAdmin() // apposto
+        } 
+        public static void SearchProductAdmin()
         {
-            var product = Common.SearchBarre(); 
-            ProductDetailsForAdmin(product);
+            var products = Common.SearchBarre();
+
+            if (products.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Ingen produkt hittades.");
+                Console.ResetColor();
+                Console.ReadKey();
+                return;
+            }
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Resultat av sökning:");
+            Console.ResetColor();
+            Console.WriteLine("===================================================================================================================");
+
+            foreach (var product in products)
+            {
+                string featuredOrNot = product.IsFeatured ? "Utvald på start sida" : "Ej utvald på start sida";
+
+                Console.WriteLine("ProduktId: " + product.Id + " | Namn: " + product.Name + " | Pris: " + product.Price + " kr | Lager: " + product.Stock + " | Kategori: " + product.Category.Name + " | Status: " + featuredOrNot);
+                Console.WriteLine("Leverantör: " + product.Supplier);
+                Console.WriteLine("Beskrivning: " + product.Description);
+                Console.WriteLine("-------------------------------------------------------------------------------------------------------------------");
+            }
+
+            Console.WriteLine("Tryck valfri tangent för att fortsätta...");
+            Console.ReadKey();
         }
-        public static void ChangeFeaturedProducts() // apposto
+        public static void ChangeFeaturedProducts() 
         {
             Console.Clear();
             Console.WriteLine("Utvalda produkter på start sida :");

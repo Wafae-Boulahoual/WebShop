@@ -27,7 +27,7 @@ namespace VardagshörnanApp.Admin
                         Console.WriteLine("-----------------------------------------------------------------------------------------");
                     }
                 }
-                Console.WriteLine("Tryck en valfri tangent för att fortsätta...");
+                Console.WriteLine("Tryck en valfri tangent...");
                 Console.ReadKey();
                 return;
             }
@@ -37,10 +37,13 @@ namespace VardagshörnanApp.Admin
             Console.Clear();
             Console.WriteLine("Lägga till en ny kategori");
             Console.WriteLine("------------------------");
+            Console.WriteLine();
             Console.WriteLine("Kategori namn:");
             string name = Console.ReadLine();
+            Console.WriteLine();
             Console.WriteLine("Detaljerad information :");
             string detail = Console.ReadLine();
+            Console.WriteLine();
             using (var db = new MyDbContext())
             {
                 var newCategory = new Category
@@ -51,24 +54,29 @@ namespace VardagshörnanApp.Admin
                 db.Categories.Add(newCategory);
                 db.SaveChanges();
             }
+            Console.ForegroundColor= ConsoleColor.Green;
             Console.WriteLine("Kategorin har lagts till i webbshoppen.");
+            Console.ResetColor();
+            Console.WriteLine("Tryck en valfri tangent för att fortsätta.");
             Console.ReadKey();
         }
         public static void ChangeNameCategory()
         {
             Console.Clear();
             AllCategoriesForAdmin();
-            Console.WriteLine("Vilken kategori vill du ändra namnet på?");
-            Console.WriteLine("Ange Kategori ID: ");
+            Console.WriteLine("Vilken kategori vill du ändra namnet på? Ange Kategori ID: ");
             int choiceId = int.Parse(Console.ReadLine());
             using (var db = new MyDbContext())
             {
                 var CategoryToUpdate = (from c in db.Categories
                                         where c.Id == choiceId
-                                        select c).SingleOrDefault();
+                                        select c).SingleOrDefault(); 
                 if (CategoryToUpdate == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Kategorin hittades inte!");
+                    Console.ResetColor();
+                    Thread.Sleep(1000);
                     return;
                 }
                 else
@@ -77,7 +85,10 @@ namespace VardagshörnanApp.Admin
                     string NewName = Console.ReadLine();
                     CategoryToUpdate.Name = NewName;
                     db.SaveChanges();
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Uppdateringen lyckades.");
+                    Console.ResetColor();
                 }
                 Console.ReadKey();
             }
@@ -86,8 +97,7 @@ namespace VardagshörnanApp.Admin
         {
             Console.Clear();
             AllCategoriesForAdmin();
-            Console.WriteLine("Vilken kategori vill du ändra beskrivning på?");
-            Console.WriteLine("Ange Kategori ID: ");
+            Console.WriteLine("Vilken kategori vill du ändra beskrivning på? Ange Kategori ID: ");
             int Id = int.Parse(Console.ReadLine());
             using (var db = new MyDbContext())
             {
@@ -96,7 +106,9 @@ namespace VardagshörnanApp.Admin
                                         select c).SingleOrDefault();
                 if (CategoryToUpdate == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Kategorin hittades inte!");
+                    Console.ResetColor();
                     return;
                 }
                 else
@@ -105,7 +117,9 @@ namespace VardagshörnanApp.Admin
                     string NewDescription = Console.ReadLine();
                     CategoryToUpdate.Description = NewDescription;
                     db.SaveChanges();
+                    Console.WriteLine();
                     Console.WriteLine("Uppdateringen lyckades.");
+                    Console.WriteLine("Tryck en valfri tangent för att fortsätta.");
                 }
             }
             Console.ReadKey();

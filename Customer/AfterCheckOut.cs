@@ -26,8 +26,7 @@ namespace VardagshörnanApp.Customer
 
                 if (choice == '1')
                 {
-                    CustomerPage.CustomerMenuAsync(); 
-                    break;
+                    return;
                 }
                 else if (choice == '2')
                 {

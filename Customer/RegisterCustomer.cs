@@ -111,7 +111,6 @@ namespace VardagshörnanApp.Customer
                 }
                 
                 Session.LoggedInCustomer = customer;
-                CustomerPage.LoggedInCustomer= customer;
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Grattis, " + customer.FirstName + "! Din registrering är klar.");
                 Console.WriteLine();
@@ -156,7 +155,6 @@ namespace VardagshörnanApp.Customer
                     return null;
                 }
 
-                CustomerPage.LoggedInCustomer = customer; 
                 Session.LoggedInCustomer = customer;
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Clear();

@@ -19,7 +19,7 @@ namespace VardagshörnanApp.Models
         public string? PhoneNumber { get; set; } // string för att inte ta borta 0 från början
         public DateOnly BirthDate { get; set; }
         public string Password { get; set; }
-        public virtual ICollection<Order> Orders { get; set; } = new List<Order>(); // relation en till många som EF använder + bekräftade ordrar
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>(); // relation en till många 
         
     }
 }
